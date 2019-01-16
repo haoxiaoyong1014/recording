@@ -1,18 +1,18 @@
 ### 多线程编程
 
-[基本知识回顾](#mark)
+* [基本知识回顾](#mark)
 
-[怎么理解多线程](#lijie)
+* [怎么理解多线程](#lijie)
 
-[线程安全](#anquan)
+* [线程安全](#anquan)
 
-[出现线程安全的原因](#yuanyin)
+* [出现线程安全的原因](#yuanyin)
 
-[解决线程安全问题](#jieju)
+* [解决线程安全问题](#jieju)
 
-[java API 中的线程安全问题](#API)
+* [java API 中的线程安全问题](#API)
 
-[线程间的通信](#tongxin)
+* [线程间的通信](#tongxin)
 
 <div id="Mark"></div>
 
