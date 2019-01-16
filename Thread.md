@@ -1,6 +1,12 @@
 ### 多线程编程
 
-#### 基本知识回顾
+[基本知识回顾](#mark)
+
+[线程安全](#anquan)
+
+[出现线程安全的原因](#yuanyin)
+
+#### 基本知识回顾 <div id="Mark"></div>
 
 线程是比进程更小的能独立运行的基本单位,他是进程的一部分,一个进程可以有多个进程,但至少有一个线程,即主线程执行(java的 main方法).
 我们既可以编写单线程应用也可以编写多线程樱应用.
@@ -96,7 +102,7 @@ public class RunnableFor2 implements Runnable {
 ```
 RunnableFor1和RunnableFor2这个时候是通过实现Runnable类来实现的,这个时候RunnableFor1和RunnableFor2就不能叫线程类了,可以叫任务类
 
-#### 线程安全
+#### 线程安全 <div id="anquan"></div>
 
 **产生多线程安全问题的原因**
  
@@ -159,7 +165,7 @@ A 把某一张火车票卖出去之后，窗口B 并不知道，因为这是两�
 
 
 
-#### 线程安全问题出现的原因
+#### 线程安全问题出现的原因 <div id="yuanyin"></div>
 
 <img src="https://upload-images.jianshu.io/upload_images/15181329-927d3143d10abb49.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 
@@ -297,4 +303,6 @@ synchronized的作用就是说进入这个带有synchronized关键字修饰的�
 通过查看源码，我们发现StringBuffer 和Vector 类中的大部分方法都是同步方法，所以证明这两个类在使用时是保证线程安全的；而StringBuilder 和ArrayList 类中的方法都是普通方法，
 没有使用synchronized 关键字进行修饰，所以证明这两个类在使用时不保证线程安全。线程安全和性能之间不可兼得，保证线程安全就会损失性能，保证性能就不能满足线程安全。
  
-#### 线程间的通信                                                   
+#### 线程间的通信 
+
+                                                  
