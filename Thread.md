@@ -8,6 +8,12 @@
 
 [出现线程安全的原因](#yuanyin)
 
+[解决线程安全问题](#jieju)
+
+[java API 中的线程安全问题](#API)
+
+[线程间的通信](#tongxin)
+
 <div id="Mark"></div>
 
 #### 基本知识回顾 
@@ -108,7 +114,9 @@ public class RunnableFor2 implements Runnable {
 ```
 RunnableFor1和RunnableFor2这个时候是通过实现Runnable类来实现的,这个时候RunnableFor1和RunnableFor2就不能叫线程类了,可以叫任务类
 
-#### 线程安全 <div id="anquan"></div>
+<div id="anquan"></div>
+
+#### 线程安全 
 
 **产生多线程安全问题的原因**
  
@@ -169,14 +177,16 @@ public static void main(String[] args) {
 A 把某一张火车票卖出去之后，窗口B 并不知道，因为这是两个线程，所以窗口B 也可能会
 再卖出去一张相同的火车票。
 
+<div id="yuanyin"></div>
 
-
-#### 线程安全问题出现的原因 <div id="yuanyin"></div>
+#### 线程安全问题出现的原因 
 
 <img src="https://upload-images.jianshu.io/upload_images/15181329-927d3143d10abb49.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 
 多个线程操作的是同一个共享资源，但是线程之间是彼此独立、互相隔绝的，因此就会
 出现数据（共享资源）不能同步更新的情况，这就是线程安全问题。
+
+<div id="jieju"></div>
 
 #### 解决线程安全问题
 
@@ -285,6 +295,7 @@ synchronized的作用就是说进入这个带有synchronized关键字修饰的�
 
 <img src="https://upload-images.jianshu.io/upload_images/15181329-fc5b69aee4c114af.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 
+<div id="API"></div>
 
 #### java API 中的线程安全问题
 
@@ -308,6 +319,8 @@ synchronized的作用就是说进入这个带有synchronized关键字修饰的�
 
 通过查看源码，我们发现StringBuffer 和Vector 类中的大部分方法都是同步方法，所以证明这两个类在使用时是保证线程安全的；而StringBuilder 和ArrayList 类中的方法都是普通方法，
 没有使用synchronized 关键字进行修饰，所以证明这两个类在使用时不保证线程安全。线程安全和性能之间不可兼得，保证线程安全就会损失性能，保证性能就不能满足线程安全。
+ 
+<div id="tongxin"></div> 
  
 #### 线程间的通信 
 
