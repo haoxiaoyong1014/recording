@@ -1,3 +1,5 @@
+<div id="top"></div>
+
 ### 多线程编程
 
 * [基本知识回顾](#mark)
@@ -13,6 +15,8 @@
 * [java API 中的线程安全问题](#API)
 
 * [线程间的通信](#tongxin)
+
+* [生产者消费者模式](#sq)
 
 <div id="Mark"></div>
 
@@ -322,6 +326,207 @@ synchronized的作用就是说进入这个带有synchronized关键字修饰的�
  
 <div id="tongxin"></div> 
  
-#### 线程间的通信 
+#### 线程间的通信
 
+多个线程并发执行时,在默认情况下CPU是随机性的在线程之间进行切换的,但是有时候我们希望他们能有规律的执行,那么,多个线程之间就需要一些协调通信来改变或者控制CPU
+的随机性,java提供了等待唤醒机制来解决这个问题,具体来说是多个线程依靠一个同步锁,然后借助 wait()和 notify()方法就可以实现线程间的协调通信.
+同步锁相当于中间人的作用,多个线程必须用同一个同步锁(认识同一个中间人),只有同一个锁上的被等待的线程，才可以被持有该锁的另一个线程唤醒，使用不同锁的线程之间
+不能相互唤醒，也就无法协调通信。                                     
+   
+<img src="https://upload-images.jianshu.io/upload_images/15181329-1888d5c432510843.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">                                     
+
+Java 在Object 类中提供了一些方法可以用来实现线程间的协调通:
+
+* public final void wait(); 让当前线程释放锁
+* public final native void wait(long timeout); 让当前线程释放锁，并等待xx 毫秒
+* public final native void notify(); 唤醒持有同一锁的某个线程
+* public final native void notifyAll(); 唤醒持有同一锁的所有线程
+
+需要注意的是：在调用wait 和notify 方法时，当前线程必须已经持有锁，然后才可以调用，否则将会抛出IllegalMonitorStateException 异常。
+
+**ThreadForNum1:**
+```java
+public class ThreadForNum1 extends Thread {
+
+    public void run() {
+        for (int i = 0; i < 11; i++) {
+            synchronized (MyLock.o) {
+                System.out.println("1");
+                MyLock.o.notify();//唤醒另一个线程
+                try {
+                    MyLock.o.wait();//让自己休眠并释放锁
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+}
+```
+**ThreadForNum2:**
+```java
+public class ThreadForNum2 extends Thread {
+
+    public void run() {
+        for (int i = 0; i < 11; i++) {
+            synchronized (MyLock.o) {
+                System.out.println("2");
+                MyLock.o.notify();//唤醒另一个线程
+                try {
+                    MyLock.o.wait();//让自己休眠并释放锁
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+}
+```
+**测试结果**
+```
+1
+2
+1
+2
+1
+2
+1
+2
+...
+```
+
+<div id="sq"></div>
+
+#### 生产者消费者模式
+
+该模式现实生活中很常见,在项目开发中也广泛使用,他是线程间通信的经典应用,生产者是一堆线程,消费者也是一堆线程,
+内存缓冲区(容器)可以使用List集合,该模式的关键之处是如何处理多线程之间的协调通信,内存缓冲区为空的时候,消费者必须等待,
+而内存缓冲区满的时候,生产者必须等待,一定要保持消费者和生产者的动态平衡.
+
+下面的案例模拟实现农夫采摘水果放到筐里，小孩从筐里拿水果吃，农夫是一个线程，
+小孩是一个线程，水果筐放满了，农夫停；水果筐空了，小孩停
+
+**Kuang**
+
+```java
+public class Kuang {
+//这个集合就是水果筐假设最多存10 个水果
+public static ArrayList<String> kuang=new ArrayList<String>();
+}
+```
+
+上述代码定义一个静态集合作为内存缓冲区用来存储数据，同时这个集合也可以作为锁去被
+多个线程使用。
+
+**Farmer**
+
+```java
+public class Farmer extends Thread {
+
+    @Override
+    public void run() {
+        while (true) {
+            synchronized (Kuang.kuang) {
+                //筐放满了就让农夫休息
+                if (Kuang.kuang.size() == 10) {
+                    try {
+                        Kuang.kuang.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                //2 往筐里放水果
+                Kuang.kuang.add("apple");
+                System.out.println("农夫放了一个水果,目前框里有" + Kuang.kuang.size() + "个水果");
+                //3唤醒小孩继续吃
+                Kuang.kuang.notify();
+            }
+            //模拟控制速度
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+```
+
+上述代码就是农夫线程，不断的往集合（筐）里放水果，当筐满了就停，同时释放锁。
+
+**Child**
+```java
+public class Child extends Thread {
+
+    @Override
+    public void run() {
+        while (true) {
+            synchronized (Kuang.kuang) {
+                //1 框里没有水果就让小孩休息
+                if (Kuang.kuang.size() == 0) {
+                    try {
+                        Kuang.kuang.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                // 2 小孩吃水果
+                Kuang.kuang.remove("apple");
+                System.out.println("小孩吃了一个水果,目前框里有" + Kuang.kuang.size() + "个水果");
+                //唤醒农夫继续放水果
+                Kuang.kuang.notify();
+            }
+            //模拟控制速度
+            try {
+                Thread.sleep(400);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+}
+```
+上述代码是小孩线程，不断的从集合（筐）里拿水果吃，当筐空了就停，同时释放锁
+
+**测试**
+1,当农夫放水果的速度大于小孩吃的速度的时候
+```
+农夫放了一个水果,目前框里有1个水果
+农夫放了一个水果,目前框里有2个水果
+农夫放了一个水果,目前框里有3个水果
+小孩吃了一个水果,目前框里有2个水果
+农夫放了一个水果,目前框里有3个水果
+农夫放了一个水果,目前框里有4个水果
+农夫放了一个水果,目前框里有5个水果
+农夫放了一个水果,目前框里有6个水果
+小孩吃了一个水果,目前框里有5个水果
+农夫放了一个水果,目前框里有6个水果
+农夫放了一个水果,目前框里有7个水果
+农夫放了一个水果,目前框里有8个水果
+农夫放了一个水果,目前框里有9个水果
+小孩吃了一个水果,目前框里有8个水果
+```
+2,当农夫放的水果的速度小于小孩吃的速度的时候
+
+```
+农夫放了一个水果,目前框里有1个水果
+小孩吃了一个水果,目前框里有0个水果
+农夫放了一个水果,目前框里有1个水果
+小孩吃了一个水果,目前框里有0个水果
+农夫放了一个水果,目前框里有1个水果
+小孩吃了一个水果,目前框里有0个水果
+农夫放了一个水果,目前框里有1个水果
+小孩吃了一个水果,目前框里有0个水果
+农夫放了一个水果,目前框里有1个水果
+小孩吃了一个水果,目前框里有0个水果
+农夫放了一个水果,目前框里有1个水果
+小孩吃了一个水果,目前框里有0个水果
+农夫放了一个水果,目前框里有1个水果
+小孩吃了一个水果,目前框里有0个水果
+农夫放了一个水果,目前框里有1个水果
+小孩吃了一个水果,目前框里有0个水果
+农夫放了一个水果,目前框里有1个水果
+```
+[回到顶部](#top)
                                                   
