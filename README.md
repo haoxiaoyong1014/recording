@@ -10,15 +10,21 @@
     
 **BIO编程**    
 
-**NIO编程**    
+**[NIO编程](https://github.com/haoxiaoyong1014/recording/blob/master/Nio.md)**    
 
-    * 概述
-    
-    * 文件IO
-    
-    * 网络IO
-    
-    * AIO和IO总结
+* 网络IO的介绍
+
+* nio的概述
+
+* channel通道
+
+* buffer缓冲区
+
+* selector选择器
+
+* nio读取文件
+
+* nio实例
     
     
 **Netty框架**   
