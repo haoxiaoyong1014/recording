@@ -87,6 +87,7 @@ Java NIO 由以下几个核心部分组成：
 #### 选择器
 <div id="selector"></div>
 选择器：相当于一个观察者，用来监听通道感兴趣的事件，一个选择器可以绑定多个通道。
+
 ![image.png](https://upload-images.jianshu.io/upload_images/15204062-cee15bf85fd22d79.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 通道向选择器注册时，需要指定感兴趣的事件，选择器支持以下事件：
 SelectionKey.OP_CONNECT
