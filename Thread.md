@@ -6,11 +6,21 @@
 
 * [怎么理解多线程](#lijie)
 
+* [两种方式的区别](#qubie)
+
+* [获取当前线程的对象](#pojo)
+
+* [守护线程](#protect)
+
+* [加入线程(join(),join(int))](#join)
+
 * [线程安全](#anquan)
 
 * [出现线程安全的原因](#yuanyin)
 
 * [解决线程安全问题](#jieju)
+
+* [死锁](#lock)
 
 * [java API 中的线程安全问题](#API)
 
@@ -141,6 +151,176 @@ public class RunnableFor2 implements Runnable {
 同上
 ```
 RunnableFor1和RunnableFor2这个时候是通过实现Runnable类来实现的,这个时候RunnableFor1和RunnableFor2就不能叫线程类了,可以叫任务类
+
+<div id="qubie"></div>
+
+#### 两种方式的区别
+
+查看源码我们发现: 
+    
+    继承Thread: 由于子类重写了Thread类的run(),当调用 statrt()时,直接找子类的run()方法
+    
+    实现Runnable: 构造函数中传入Runnable的引用,成员变量记住了它,statrt()调用run()方法时内部判断成员变量Runable的引用是否
+    为空,不为空编译看的是Runnable的run(),运行是执行的是子类的run()方法.
+    
+继承Thread:
+    
+    好处: 可以直接使用Thread类中方法,代码简单    
+    
+    弊端: 如果已经了父类,就不能用这种方法
+    
+实现Runnable接口:
+
+    好处: 即使自己定义了线程类也没有什么关系,因为有了父类也可以实现接口,而且接口是可以多实现,
+    
+    弊端: 不能直接使用Thread中的方法需要先获取到线程对象后,才能得到Thread的方法,代码复杂   
+
+个人理解: 
+
+    实现Runnable接口是对继承Thread类的一种补充.
+    
+<div id="pojo"></div>
+
+#### 获取当前线程的对象
+
+**Thread.currentThread()**
+
+```java
+ public static void main(String[] args) {
+        new Thread(new Runnable() {
+            public void run() {
+                System.out.println(Thread.currentThread().getName() + " aaaaaaaaaa");
+            }
+        }).start();
+
+        new Thread(new Runnable() {
+            public void run() {
+                System.out.println(Thread.currentThread().getName() + " bb");
+            }
+        }).start();
+        Thread.currentThread().setName("我是主线程");                    //获取主函数线程的引用,并改名字
+        System.out.println(Thread.currentThread().getName());        //获取主函数线程的引用,并获取名字
+    }    
+```
+
+<div id="protect"></div>
+
+#### 守护线程
+
+**setDaemon()设置一个线程为守护线程, 该线程不会单独执行, 当其他非守护线程都执行结束后, 自动退出**
+
+```java
+public static void main(String[] args) {
+
+        Thread t1 = new Thread() {
+            @Override
+            public void run() {
+                for (int i = 0; i < 50; i++) {
+                    System.out.println(getName() + " ...aaaaaaaa");
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+
+        Thread t2 = new Thread() {
+            @Override
+            public void run() {
+                for (int i = 0; i < 5; i++) {
+                    System.out.println(getName()+ " ...bb");
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        t1.setDaemon(true);             //将t1设置为守护线程
+        t1.start();
+        t2.start();
+    }
+```
+此例子是将t1设置为守护线程
+
+**打印结果**
+
+```
+Thread-0 ...aaaaaaaa
+Thread-1 ...bb
+Thread-1 ...bb
+Thread-0 ...aaaaaaaa
+Thread-0 ...aaaaaaaa
+Thread-1 ...bb
+Thread-1 ...bb
+Thread-0 ...aaaaaaaa
+Thread-1 ...bb
+Thread-0 ...aaaaaaaa
+Thread-0 ...aaaaaaaa
+```
+当t2执行完毕之后 t1自动退出, 守护线程起到的就是监控,管理的作用.
+
+举个例子:
+
+    就像 城堡门前有个卫兵 （守护线程），里面有诸侯（非守护线程），他们是可以同时干着各自的活儿，但是 城堡里面的人都搬走了， 那么卫兵也就没有存在的意义了。
+
+> 用户线程即运行在前台的线程，而守护线程是运行在后台的线程。 守护线程作用是为其他前台线程的运行提供便利服务，
+而且仅在普通、非守护线程仍然运行时才需要，比如垃圾回收线程就是一个守护线程。
+
+另外有几点需要注意:
+    
+    1,setDaemon(true)必须在调用线程的start（）方法之前设置，否则会抛出IllegalThreadStateException异常
+    
+    2,在守护线程中产生的新线程也是守护线程。
+    
+    3,不要在守护线程中执行业务逻辑操作
+    
+<div id="join"></div>
+
+#### 加入线程(join(),join(int))
+
+join(), 当前线程暂停, 等待指定的线程执行结束后, 当前线程再继续
+join(int), 可以等待指定的毫秒之后继续
+
+```java
+public static void main(String[] args) {
+        final Thread t1 = new Thread() {
+            @Override
+            public void run() {
+                for (int i = 0; i < 50; i++) {
+                    System.out.println(getName() + " ....aaaaa");
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        Thread t2 = new Thread() {
+            @Override
+            public void run() {
+                for (int i = 0; i < 50; i++) {
+                    if (i == 2) {
+                        try {
+                            //t1.join();              //插队,加入
+                            t1.join(30);
+                            Thread.sleep(10);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    System.out.println(getName() + " ....bbb");
+                }
+            }
+        };
+        t1.start();
+        t2.start();
+    }
+```
 
 <div id="anquan"></div>
 
@@ -353,6 +533,69 @@ synchronized的作用就是说进入这个带有synchronized关键字修饰的�
 所以，synchronized既保证了多线程的并发有序性，又保证了多线程的内存可见性。
 
 <img src="https://upload-images.jianshu.io/upload_images/15181329-fc5b69aee4c114af.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+<div id="lock"></div>
+
+#### 死锁
+
+当某个任务在等待另一个任务,而后者又等待别的任务,这样一直下去,直到这个链条上的任务又在等待第一个任务释放锁,这得到了一个任务之间相互等待的连续循环,
+没有哪个线程能继续,这就被称之为死锁.
+
+多线程同步的时候, 如果同步代码嵌套, 使用相同锁, 就有可能出现死锁
+
+尽量不要嵌套使用
+		
+```java
+private static String s1 = "筷子左";
+			private static String s2 = "筷子右";
+			public static void main(String[] args) {
+				new Thread() {
+					public void run() {
+						while(true) {
+							synchronized(s1) {
+								System.out.println(getName() + "...拿到" + s1 + "等待" + s2);
+								synchronized(s2) {
+									System.out.println(getName() + "...拿到" + s2 + "开吃");
+								}
+							}
+						}
+					}
+				}.start();
+				
+				new Thread() {
+					public void run() {
+						while(true) {
+							synchronized(s2) {
+								System.out.println(getName() + "...拿到" + s2 + "等待" + s1);
+								synchronized(s1) {
+									System.out.println(getName() + "...拿到" + s1 + "开吃");
+								}
+							}
+						}
+					}
+				}.start();
+			}
+```
+**打印结果**
+
+```
+Thread-0...拿到筷子左等待筷子右
+Thread-0...拿到筷子右开吃
+Thread-0...拿到筷子左等待筷子右
+Thread-0...拿到筷子右开吃
+Thread-0...拿到筷子左等待筷子右
+Thread-0...拿到筷子右开吃
+Thread-0...拿到筷子左等待筷子右
+Thread-0...拿到筷子右开吃
+Thread-0...拿到筷子左等待筷子右
+Thread-0...拿到筷子右开吃
+Thread-0...拿到筷子左等待筷子右
+Thread-0...拿到筷子右开吃
+Thread-0...拿到筷子左等待筷子右
+Thread-0...拿到筷子右开吃
+Thread-0...拿到筷子左等待筷子右
+Thread-1...拿到筷子右等待筷子左
+```
 
 <div id="API"></div>
 
