@@ -205,3 +205,39 @@ BlockingQueue blockingQueue = new LinkedBlockingDeque<>(10);
 所以，如果你使用put()方法插入元素，而队列内存已满的情况下，我们的生产者就必须等待，直到有可用的slot出现。    
 
 **使用线程池**
+
+```java
+public class ProducerConsumerExecutorService {
+    public static void main(String[] args) {
+        BlockingQueue<Integer> blockingQueue = new LinkedBlockingDeque<>(2);
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        Runnable producerTask = () -> {
+            try {
+                int value = 0;
+                while (true) {
+                    blockingQueue.put(value);
+                    System.out.println("Produced " + value);
+                    value++;
+                    Thread.sleep(1000);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        };
+        Runnable consumerTask = () -> {
+            try {
+                while (true) {
+                    int value = blockingQueue.take();
+                    System.out.println("Consume " + value);
+                    Thread.sleep(1000);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        };
+        executor.execute(producerTask);
+        executor.execute(consumerTask);
+        executor.shutdown();
+    }
+}
+```
