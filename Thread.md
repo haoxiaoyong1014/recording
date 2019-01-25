@@ -722,6 +722,11 @@ public class ThreadForNum2 extends Thread {
     	 需要等待的时候使用Condition的await()方法, 唤醒的时候用signal()方法
     	 不同的线程使用不同的Condition, 这样就能区分唤醒的时候找哪个线程了
 
+**代码**
+
+<a href="https://github.com/haoxiaoyong1014/recording/blob/master/src/main/java/cn/haoxiaoyong/record/thread/Demo3_Printer.java">Demo3_Printer</a>
+
+<a href="https://github.com/haoxiaoyong1014/recording/blob/master/src/test/java/cn/haoxiaoyong/record/Demo3_ReentrantLock.java">Demo3_ReentrantLock</a>    
 
 **补充**
 
