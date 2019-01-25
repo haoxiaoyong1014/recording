@@ -287,3 +287,5 @@ public class ProducerConsumerExecutorService {
 在我们简单的案例下，一切都跟之前一样运行。就像之前的例子，我们仍然有两个线程，他们仍然要以同样的方式生产和消费元素。虽然我们并没有让性能得到提升，但是代码看起来干净多了。我们不再手动创建线程，而只是具体说明我们想要什么：我们想要并发执行某些任务。
 
 所以，当你使用一个线程池时。你不需要考虑线程是并发执行的单位，相反的，你把一些任务看作并发执行的就好。以上就是你需要知道的，剩下的由执行程序去处理。执行程序会收到一些任务，然后，它会分配工作线程去处理它们。
+
+关于线程池更多的可以了解<a href="https://allegro.tech/2015/05/thread-pools.html">这里</a>和<a href="https://dzone.com/articles/getting-the-most-out-of-the-java-thread-pool">这里</a>
