@@ -26,6 +26,8 @@
 
 * [线程间的通信](#tongxin)
 
+* [线程的生命周期](#live)
+
 * [生产者消费者模式](#sq)
 
 * [生产者-消费者与队列](#queue)
@@ -707,6 +709,36 @@ public class ThreadForNum2 extends Thread {
 2
 ...
 ```
+
+当出现三个线程或者三个以上的线程进行通信时就不能使用`notify()`方法了,在JDK1.5之前我们要使用`notifyAll()`, 用while来反复判断条件(不能使用if做条件判断),
+因为 wait是在哪里等待就在哪里醒来
+
+在JDK1.5之后:
+
+    1.同步
+    	 使用ReentrantLock类的lock()和unlock()方法进行同步
+    2.通信
+    	 使用ReentrantLock类的newCondition()方法可以获取Condition对象
+    	 需要等待的时候使用Condition的await()方法, 唤醒的时候用signal()方法
+    	 不同的线程使用不同的Condition, 这样就能区分唤醒的时候找哪个线程了
+
+
+**补充**
+
+    1,在同步代码块中,用哪个对象锁,就用哪个对象调用 wait方法
+    2,为什么wait方法和 notify方法定义在Object这个类中?
+        因为锁对象可以是任意对象,Object是所有类的基类,所以 wait方法和notify方法需要定义在Object中
+    3,sleep 方法和wait方法的区别?
+        (1),sleep方法必须传入参数,参数就是时间,时间到了自动醒来
+            wait方法可以传入参数也可以不用参入参数,传入参数就是在参数的时间结束后等待,不传入参数就是直接等待,
+        (2),sleep 方法在同步函数或者或者同步代码块中,不释放锁,也就说是抱着锁睡
+            wait方法在同步函数或者或者同步代码块中,释放锁    
+
+<div id="live"></div>
+
+#### 线程的生命周期
+
+<img src="https://upload-images.jianshu.io/upload_images/15181329-25e3cd7ae5e7efd2.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 
 <div id="sq"></div>
 
