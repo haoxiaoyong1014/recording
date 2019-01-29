@@ -37,6 +37,10 @@
     BIO介绍
     
     BIO代码实例
+    
+    多线程的方式-同步阻塞式I/O
+    
+    利用线程池解决BIO-伪异步I/O模型
 
 **[NIO编程](https://github.com/haoxiaoyong1014/recording/blob/master/Nio.md)**    
 

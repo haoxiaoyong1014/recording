@@ -1,4 +1,4 @@
-package cn.haoxiaoyong.record;
+package cn.haoxiaoyong.record.thread;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;

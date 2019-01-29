@@ -1,4 +1,4 @@
-package cn.haoxiaoyong.record;
+package cn.haoxiaoyong.record.thread;
 
 import cn.haoxiaoyong.record.thread.SaleWindow;
 import org.junit.Test;
