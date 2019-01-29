@@ -6,9 +6,9 @@
 
 [BIO代码实例](#BIO代码实例)
 
-[多线程的方式-同步阻塞式I/O](#多线程的方式-同步阻塞式I/O)
+[多线程的方式-同步阻塞式I/O](#thread)
 
-[利用线程池解决BIO-伪异步I/O模型](#利用线程池解决BIO-伪异步I/O模型)
+[利用线程池解决BIO-伪异步I/O模型](#threadPool)
 
 #### 到底什么是“IO Block”
 
@@ -120,6 +120,8 @@ public class TCPClient {
 
 ![image.png](https://upload-images.jianshu.io/upload_images/15181329-934f22e2592d63ef.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 ![image.png](https://upload-images.jianshu.io/upload_images/15181329-fef4b73c982bcc82.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+<div id="thread"></div>
 
 #### 多线程的方式-同步阻塞式I/O
 
@@ -270,12 +272,14 @@ public static void main(String[] args) {
 ![5431548743483_.pic.jpg](https://upload-images.jianshu.io/upload_images/15181329-78bca56907c8ed1c.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 ![5441548743483_.pic.jpg](https://upload-images.jianshu.io/upload_images/15181329-981f0c9934ed37d3.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-这种方式用图形说明:
+这种方式用图形说明(<a href="https://blog.csdn.net/anxpp/article/details/51512200">图片来源于网络</a>):
 
 ![5451548745181_.pic.jpg](https://upload-images.jianshu.io/upload_images/15181329-628a2a755d51920c.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 以为这样就结束了吗?当然不是,频繁的创建和销毁线程是极其浪费资源的,他们消耗着CPU和内存,线程池可以根据在创建线程池时选择的策略自动处理线程生命周期。线程池的一个重要特性是它允许应用程序优雅地降级。
 线程池中的线程是可以重复的使用,当一个线程结束之后放回线程池,下次有请求我们再从线程池中拿取,下面我们就用线程池来解决上面的问题(虽然不是从根本上解决问题)
+
+<div id="threadPool"></div>
 
 #### 利用线程池解决BIO-伪异步I/O模型
 
@@ -302,9 +306,31 @@ class BioThreadPoolServer {
 ```
 测试运行结果是一样的。
 
+这种方式用图形说明(<a href="https://blog.csdn.net/anxpp/article/details/51512200">图片来源于网络</a>):
+
+![image.png](https://upload-images.jianshu.io/upload_images/15181329-e360e4d254ae1421.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 我们知道，如果使用CachedThreadPool线程池（不限制线程数量），其实除了能自动帮我们管理线程（复用），看起来也就像是1:1的客户端：线程数模型，
 而使用FixedThreadPool我们就有效的控制了线程的最大数量，保证了系统有限的资源的控制，实现了N:M的伪异步I/O模型。
 
-当然上面也说到了,这没有从根本上去解决问题.怎么才能从根本上解决问题呢?这时候改 NIO 登场了....
+但是，正因为限制了线程数量，如果发生大量并发请求，超过最大数量的线程就只能等待，直到线程池中的有空闲的线程可以被复用。而对Socket的输入流就行读取时，会一直阻塞，直到发生：
 
-<a href="https://github.com/haoxiaoyong1014/recording/blob/master/nio.md">NIO</a>
+            有数据可读
+    
+            可用数据以及读取完毕
+    
+            发生空指针或I/O异常
+
+
+所以在读取数据较慢时（比如数据量大、网络传输慢等），大量并发的情况下，其他接入的消息，只能一直等待，这就是最大的弊端。
+当然上面也说到了,这没有从根本上去解决问题,而后面即将介绍的<a href="https://github.com/haoxiaoyong1014/recording/blob/master/nio.md">NIO</a>，
+就能解决这个难题。
+
+
+
+
+
+
+
+
+
