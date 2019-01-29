@@ -2,35 +2,41 @@
 
 **[多线程编程](https://github.com/haoxiaoyong1014/recording/blob/master/Thread.md)**
 
-    * 基本知识回顾
+     基本知识回顾
     
-    * 怎么理解多线程
+     怎么理解多线程
     
-    * 两种方式的区别
+     两种方式的区别
     
-    * 获取当前线程的对象
+     获取当前线程的对象
     
-    * 守护线程
+     守护线程
     
-    * 加入线程(join(),join(int))
+     加入线程(join(),join(int))
     
-    * 线程安全
+     线程安全
     
-    * 解决线程安全问题
+     解决线程安全问题
     
-    * 死锁
+     死锁
     
-    * 线程间通信
+     线程间通信
     
-    * 线程的生命周期
+     线程的生命周期
     
-    * 生产者消费者模式
+     生产者消费者模式
     
-    * 生产者-消费者与队列
+     生产者-消费者与队列
     
-    * 线程池的使用
+     线程池的使用
     
-**[BIO编程](https://github.com/haoxiaoyong1014/recording/blob/master/bio.md)**    
+**[BIO编程](https://github.com/haoxiaoyong1014/recording/blob/master/bio.md)** 
+
+    到底什么是“IO Block”
+    
+    BIO介绍
+    
+    BIO代码实例
 
 **[NIO编程](https://github.com/haoxiaoyong1014/recording/blob/master/Nio.md)**    
 
