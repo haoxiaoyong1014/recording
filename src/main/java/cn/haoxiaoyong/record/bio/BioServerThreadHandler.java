@@ -31,8 +31,8 @@ public class BioServerThreadHandler implements Runnable {
                 inputStream.read(by);
                 System.out.println("我收到客户端的消息了...");
 
-                String hostAddress = socket.getInetAddress().getHostAddress();
-                System.out.println(hostAddress + "说:" + new String(by).trim());
+                String hostAddress = socket.getInetAddress().getHostAddress();//127.0.0.1
+                System.out.println("Connection form"+ socket.getRemoteSocketAddress() + "说:" + new String(by).trim());
                 //4.从连接中取出输出流并回话
                 OutputStream outputStream = socket.getOutputStream();//(4)
                 outputStream.write("没钱".getBytes());

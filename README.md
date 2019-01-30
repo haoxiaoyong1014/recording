@@ -42,7 +42,7 @@
     
     利用线程池解决BIO-伪异步I/O模型
 
-**[NIO编程](https://github.com/haoxiaoyong1014/recording/blob/master/Nio.md)**    
+**[NIO编程](https://github.com/haoxiaoyong1014/recording/blob/master/nio.md)**    
 
 * 网络IO的介绍
 

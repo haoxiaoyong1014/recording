@@ -15,7 +15,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 class BioThreadPoolServer {
 
     //创建一个核心线程数和最大线程数都为5的线程池
-    private static ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newFixedThreadPool(5);
+    private static ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newFixedThreadPool(3);
     //private static ThreadPoolExecutor executorService = (ThreadPoolExecutor) Executors.newCachedThreadPool();
 
     public static void start() throws IOException {
