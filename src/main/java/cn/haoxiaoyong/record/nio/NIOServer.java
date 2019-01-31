@@ -34,7 +34,7 @@ public class NIOServer {
             Iterator<SelectionKey> iterator = selectionKeys.iterator();
             while (iterator.hasNext()) {
                 SelectionKey key = iterator.next();
-                if (key.isAcceptable()) {
+                if (key.isAcceptable()) {  //客户端连接事件
                     ServerSocketChannel channel = (ServerSocketChannel) key.channel();
                     SocketChannel clinetChannel = channel.accept();
                     System.out.println("Connection from " + clinetChannel.getRemoteAddress());
@@ -42,7 +42,7 @@ public class NIOServer {
                     //通过 register改变 channel 要进行的操作
                     clinetChannel.register(selector, SelectionKey.OP_READ);
                 }
-                if (key.isReadable()) {
+                if (key.isReadable()) { //客户端读取事件
                     SocketChannel channel = (SocketChannel) key.channel();
                     channel.read(byteBuffer);
                     String request = new String(byteBuffer.array()).trim();
@@ -56,3 +56,4 @@ public class NIOServer {
         }
     }
 }
+
