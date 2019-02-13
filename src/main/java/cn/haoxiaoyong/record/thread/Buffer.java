@@ -35,7 +35,7 @@ public class Buffer {
                 notify();
                 //Thread.sleep(1000);
             }
-            Thread.sleep(1000);//放在同步方法中和放在同步方法外效果不一样
+            //Thread.sleep(1000);//放在同步方法中和放在同步方法外效果不一样
         }
     }
 
@@ -52,7 +52,7 @@ public class Buffer {
                 //通知生产者
                 notify();
             }
-            Thread.sleep(1000);
+            //Thread.sleep(1000);
         }
     }
 }

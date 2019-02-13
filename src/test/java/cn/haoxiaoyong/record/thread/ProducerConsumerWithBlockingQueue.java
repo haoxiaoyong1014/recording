@@ -21,7 +21,7 @@ public class ProducerConsumerWithBlockingQueue {
                     blockingQueue.put(value);
                     System.out.println("生产 " + value);
                     value++;
-                    Thread.sleep(1000);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -32,7 +32,7 @@ public class ProducerConsumerWithBlockingQueue {
                 try {
                     int value = blockingQueue.take();
                     System.out.println("消费 " + value);
-                    Thread.sleep(1000);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

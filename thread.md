@@ -888,7 +888,7 @@ public class Child extends Thread {
 
 #### 生产者-消费者与队列
 
-<a href="https://github.com/haoxiaoyong1014/recording/blob/master/Thread3.md">生产者-消费者与队列</a>
+<a href="https://github.com/haoxiaoyong1014/recording/blob/master/thread3.md">生产者-消费者与队列</a>
 
 [回到顶部](#top)
                                                   
