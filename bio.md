@@ -1,4 +1,4 @@
-### Bio
+### Bio(同步阻塞)
 
 [到底什么是“IO Block”](#到底什么是“io-block”)
 
@@ -326,6 +326,7 @@ class BioThreadPoolServer {
 当然上面也说到了,这没有从根本上去解决问题,而后面即将介绍的<a href="https://github.com/haoxiaoyong1014/recording/blob/master/nio.md">NIO</a>，
 就能解决这个难题。
 
+<a href="https://juejin.im/post/5c2cc075f265da611037298e">BIO到NIO源码的一些事儿之BIO</a>
 
 
 

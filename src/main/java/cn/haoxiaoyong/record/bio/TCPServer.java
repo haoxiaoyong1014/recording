@@ -19,6 +19,7 @@ public class TCPServer {
         ServerSocket serverSocket = null;
         try {
             serverSocket = new ServerSocket(9999);
+            serverSocket.setSoTimeout(2);
             while (true) {
 
                 System.out.println("没有客户端连接,我阻塞在这里了.....");
