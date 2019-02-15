@@ -6,14 +6,19 @@
 
 * [channel通道](#channel)
 
+* [FileChannel文件IO](#fileChannel)
+
 * [buffer缓冲区](#buffer)
 
 * [selector选择器](#selector)
 
-* [nio读取文件](#file)
+* [selectionKey](#selectionKey)
 
-* [nio实例](#example)
+* [NIO的入门案例](#example)
 
+* [网络聊天案例](#chat)
+
+* [源码分析](#source)
 
 #### 网络IO
 <div id="network"></div>
@@ -50,11 +55,24 @@ Java NIO 由以下几个核心部分组成：
 - Buffers
 - Selectors
 
-#### 通道
 <div id="channel"></div>
+
+### 通道
+
 　通道：类似于流，但是可以异步读写数据（流只能同步读写），通道是双向的，（流是单向的），通道的数据总是要先读到一个buffer 或者 从一个buffer写入，即通道与buffer进行数据交互。这样的优点就是我们可以在读取的时候回退，对数据的操作更加灵活。
 
+> 通道（Channel）：类似于BIO 中的stream，例如FileInputStream 对象，用来建立到目
+  标（文件，网络套接字，硬件设备等）的一个连接，但是需要注意：BIO 中的stream 是单向
+  的，例如FileInputStream 对象只能进行读取数据的操作，而NIO 中的通道(Channel)是双向的，
+  既可以用来进行读操作，也可以用来进行写操作。常用的Channel 类有：FileChannel、
+  DatagramChannel、ServerSocketChannel 和SocketChannel。FileChannel 用于文件的数据读写，
+  DatagramChannel 用于UDP 的数据读写，ServerSocketChannel 和SocketChannel 用于TCP 的
+  数据读写。
+
+![image.png](https://upload-images.jianshu.io/upload_images/15181329-f2362ff3bd834e7c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+  
 ![image.png](https://upload-images.jianshu.io/upload_images/15204062-9b83f73b613429dc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 通道类型：
 - FileChannel：从文件中读写数据。　　
 - DatagramChannel：能通过UDP读写网络中的数据。　　
@@ -62,51 +80,63 @@ Java NIO 由以下几个核心部分组成：
 - ServerSocketChannel：可以监听新进来的TCP连接，像Web服务器那样。对每一个新进来的连接都会创建一个SocketChannel。　　
 - FileChannel比较特殊，它可以与通道进行数据交互， 不能切换到非阻塞模式，套接字通道可以切换到非阻塞模式；
 
-#### 缓冲区
-<div id="buffer"></div>
-缓冲区 - 本质上是一块可以存储数据的内存，被封装成了buffer对象而已！
+<div id="fileChannel"></div>
 
-##### 1、缓冲区类型：
-- ByteBuffer　　
-- MappedByteBuffer　　
-- CharBuffer　　
-- DoubleBuffer　　
-- FloatBuffer　　
-- IntBuffer　　
-- LongBuffer　　
-- ShortBuffer　　
-##### 2、常用方法：
-- allocate() - 分配一块缓冲区　　
-- put() -  向缓冲区写数据
-- get() - 向缓冲区读数据　　
-- filp() - 将缓冲区从写模式切换到读模式(翻转缓冲区，重置位置到初始位置)　　
-- clear() - 从读模式切换到写模式，不会清空数据，但后续写数据会覆盖原来的数据，即使有部分数据没有读，也会被遗忘；　　
-- compact() - 从读数据切换到写模式，数据不会被清空，会将所有未读的数据copy到缓冲区头部，后续写数据不会覆盖，而是在这些数据之后写数据
-- mark() - 对position做出标记，配合reset使用
--  reset() - 将position置为标记值
-　　　　
-##### 3、缓冲区的一些属性：
-- capacity - 缓冲区大小，无论是读模式还是写模式，此属性值不会变；
-- position - 写数据时，position表示当前写的位置，每写一个数据，会向下移动一个数据单元，初始为0；最大为capacity - 1，切换到读模式时，position会被置为0，表示当前读的位置
-- limit - 写模式下，limit 相当于capacity 表示最多可以写多少数据，切换到读模式时，limit 等于原先的position，表示最多可以读多少数据。
-#### 选择器
-<div id="selector"></div>
-选择器：相当于一个观察者，用来监听通道感兴趣的事件，一个选择器可以绑定多个通道。
+#### FileChannel
 
-![image.png](https://upload-images.jianshu.io/upload_images/15204062-cee15bf85fd22d79.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-通道向选择器注册时，需要指定感兴趣的事件，选择器支持以下事件：
-SelectionKey.OP_CONNECT
-SelectionKey.OP_ACCEPT
-SelectionKey.OP_READ
-SelectionKey.OP_WRITE　　
-如果你对不止一种事件感兴趣，那么可以用“位或”操作符将常量连接起来，如下：
- int interestSet = SelectionKey.OP_READ | SelectionKey.OP_WRITE;
+* public int read(ByteBuffer dst), 从通道读取数据并放到缓冲区中
 
-要使用Selector，得向Selector注册Channel，然后调用它的select()方法。这个方法会一直阻塞到某个注册的通道有事件就绪。一旦这个方法返回，线程就可以处理这些事件，事件的例子有如新连接进来，数据接收等。
-#### nio读取文件
-<div id="file"></div>
+* public int write(ByteBuffer src), 从通道读取数据写到缓冲区中
+
+* public long transferTo(long position, long count, WritableByteChannel target)，把数据从当前通道复制给目标通道
+
+* public long transferFrom(ReadableByteChannel src, long position, long count), 从目标通道中复制数据到当前通道
+
+
+**案例1:往本地文件中写数据**
 
 ```java
+    @Test
+    public void test1() throws Exception {
+        String str = "你好!,我是谁谁谁";
+        FileOutputStream fos = new FileOutputStream("basic.txt");
+        FileChannel fc = fos.getChannel(); //得到一个FileChannel对象
+        ByteBuffer byteBuffer = ByteBuffer.allocate(1024);//创建一个大小为1024的缓冲区
+        byteBuffer.put(str.getBytes()); //往缓冲区中写入数据
+        byteBuffer.flip(); //翻转缓冲区，重置位置到初始位置
+        fc.write(byteBuffer);//往FileChannel通道中写入数据
+        fos.close();
+    }
+```
+NIO 中的通道是从输出流对象里通过getChannel 方法获取到的，该通道是双向的，既可
+以读，又可以写。在往通道里写数据之前，必须通过put 方法把数据存到ByteBuffer 中，然
+后通过通道的write 方法写数据。在write 之前，需要调用flip 方法翻转缓冲区，把内部重置
+到初始位置，这样在接下来写数据时才能把所有数据写到通道里
+
+**案例2: 从本地文件中读数据**
+
+```java
+//从本地文件中读数据
+    @Test
+    public void test2() throws Exception{
+        File file=new File("basic.txt");
+        FileInputStream fis=new FileInputStream(file);
+        FileChannel fc = fis.getChannel();
+        ByteBuffer byteBuffer = ByteBuffer.allocate((int) file.length());
+        fc.read(byteBuffer);
+        System.out.println(new String(byteBuffer.array()).trim());
+        fis.close();
+        fc.close();
+
+    }
+```
+上述代码从输入流中获得一个通道,然后提供ByteBuffer缓冲区,该缓冲区的大小和文件的大小一致,最后通过通道的read方法把数据读取出来并
+存储到了ByteBuffer中.(例如客户端向服务端读数据,将数据读取到ByteBuffer中)
+
+**案例3: nio读取文件**
+
+```java
+
 RandomAccessFile aFile = new RandomAccessFile("data/nio-data.txt", "rw");  
 FileChannel inChannel = aFile.getChannel();  
   
@@ -127,51 +157,220 @@ bytesRead = inChannel.read(buf);
 }  
 aFile.close();  
 ```
-### nio的简单使用
+
+#### ServerSocketChannel
+
+用来在服务器端监听新的客户端Socket连接,常用方法:
+
+* public static ServerSocketChannel open()，得到一个ServerSocketChannel 通道
+
+* public final ServerSocketChannel bind(SocketAddress local)，设置服务器端端口号
+
+* public final SelectableChannel configureBlocking(boolean block)，设置阻塞或非阻塞模式，取值false 表示采用非阻塞模式
+
+* public SocketChannel accept()，接受一个连接，返回代表这个连接的通道对象
+
+* public final SelectionKey register(Selector sel, int ops)，注册一个选择器并设置监听事件
+
+#### SocketChannel
+
+网络IO通道,具体负责进行读写操作,NIO总是把缓存区的数据写入到通道,或者把通道里的数据读到缓冲区,常用方法:
+
+* public static SocketChannel open()，得到一个SocketChannel 通道
+
+* public final SelectableChannel configureBlocking(boolean block)，设置阻塞或非阻塞模式，取值false 表示采用非阻塞模式
+
+* public boolean connect(SocketAddress remote)，连接服务器
+
+* public boolean finishConnect()，如果上面的方法连接失败，接下来就要通过该方法完成连接操作
+
+* public int write(ByteBuffer src)，往通道里写数据
+
+* public int read(ByteBuffer dst)，从通道里读数据
+ 
+* public final SelectionKey register(Selector sel, int ops, Object att)，注册一个选择器并设置监听事件，最后一个参数可以设置共享数据
+    
+* public final void close()，关闭通道
+
+<div id="buffer"></div>
+
+### 缓冲区
+
+缓冲区 - 本质上是一块可以存储数据的内存，被封装成了buffer对象而已！
+
+##### 1、缓冲区类型：
+
+在NIO 中，Buffer 是一个顶层父类，它是一个抽象类，常用的Buffer 子类有：
+
+- ByteBuffer:存储字节数据到缓冲区　
+- CharBuffer:存储字符数据到缓冲区　　
+- DoubleBuffer:存储小数到缓冲区　　
+- FloatBuffer:存储小数到缓冲区　　
+- IntBuffer:存储整数数据到缓冲区　　
+- LongBuffer:存储长整型数据到缓冲区　　
+- ShortBuffer: 存储字符串数据到缓冲区　
+##### 2、常用方法：
+
+对于Java 中的基本数据类型，都有一个Buffer 类型与之相对应，最常用的自然是
+ByteBuffer 类（二进制数据），该类的主要方法如下所示
+
+- public static ByteBuffer allocate(int capacity); - 设置缓冲区的初始容量　　
+- public abstract ByteBuffer put(byte[] b); -  存储字节数据到缓冲区
+- public abstract byte[] get(); - 从缓冲区获得字节数据　　
+- public final Buffer flip(); - 将缓冲区从写模式切换到读模式(翻转缓冲区，重置位置到初始位置)　　
+- public final byte[] array(); - 把缓冲区数据转换成字节数组
+- public static ByteBuffer wrap(byte[] array); - 把一个现成的数组放到缓冲区中使用
+- clear() - 从读模式切换到写模式，不会清空数据，但后续写数据会覆盖原来的数据，即使有部分数据没有读，也会被遗忘；　　
+- compact() - 从读数据切换到写模式，数据不会被清空，会将所有未读的数据copy到缓冲区头部，后续写数据不会覆盖，而是在这些数据之后写数据
+- mark() - 对position做出标记，配合reset使用
+- reset() - 将position置为标记值
+　　　　
+##### 3、缓冲区的一些属性：
+- capacity - 缓冲区大小，无论是读模式还是写模式，此属性值不会变；
+- position - 写数据时，position表示当前写的位置，每写一个数据，会向下移动一个数据单元，初始为0；最大为capacity - 1，切换到读模式时，position会被置为0，表示当前读的位置
+- limit - 写模式下，limit 相当于capacity 表示最多可以写多少数据，切换到读模式时，limit 等于原先的position，表示最多可以读多少数据。
+
+<div id="selector"></div>
+
+### Selector(选择器)
+
+选择器：相当于一个观察者，用来监听通道感兴趣的事件，一个选择器可以绑定多个通道。
+> Selector(选择器)，能够检测多个注册的通道上是否有事件发生，如果有事件发生，便获
+  取事件然后针对每个事件进行相应的处理。这样就可以只用一个单线程去管理多个通道，也
+  就是管理多个连接。这样使得只有在连接真正有读写事件发生时，才会调用函数来进行读写，
+  就大大地减少了系统开销，并且不必为每个连接都创建一个线程，不用去维护多个线程，并
+  且避免了多线程之间的上下文切换导致的开销。
+  
+![image.png](https://upload-images.jianshu.io/upload_images/15204062-cee15bf85fd22d79.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+该类常用的方法:
+
+* public static Selector open(),得到一个选择器对象
+
+* public int select(long timeout) 监听所有注册的通道,当其中有IO操作可以进行时,将对应的SelectionKey 加入到内部集合中并返回,参数用来设置超时时间
+
+* public Set<SelectionKey>selectedKeys(),从内部集合中得到所有的SelectionKey
+
+<div id="selectionKey"></div>
+
+### SelectionKey
+
+ SelectionKey代表了Selector和网络通道的注册关系,一共四种:
+
+通道向选择器注册时，需要指定感兴趣的事件，选择器支持以下事件：
+SelectionKey.OP_CONNECT
+SelectionKey.OP_ACCEPT
+SelectionKey.OP_READ
+SelectionKey.OP_WRITE　　
+如果你对不止一种事件感兴趣，那么可以用“位或”操作符将常量连接起来，如下：
+
+int interestSet = SelectionKey.OP_READ | SelectionKey.OP_WRITE;
+
+要使用Selector，得向Selector注册Channel，然后调用它的select()方法。这个方法会一直阻塞到某个注册的通道有事件就绪。一旦这个方法返回，线程就可以处理这些事件，事件的例子有如新连接进来，数据接收等。
+
+该类常用的方法:
+
+* public abstract Selector selector(),得到与之关联的Selector对象 
+
+* public abstract SelectableChannel channel()，得到与之关联的通道
+
+* public final Object attachment()，得到与之关联的共享数据
+
+* public abstract SelectionKey interestOps(int ops)，设置或改变监听事件
+
+* public final boolean isAcceptable()，是否可以accept
+
+* public final boolean isReadable()，是否可以读
+
+* public final boolean isWritable()，是否可以写
+
+
 <div id="example"></div>
 
-#### 服务端
+### NIO的入门案例
+
+**服务端**
 
 ```java
- /*
-         *启动服务器端，配置为非阻塞，绑定端口，注册accept事件
-         *ACCEPT事件：当服务端收到客户端连接请求时，触发该事件
-         */
-        ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-        serverSocketChannel.configureBlocking(false);
-        ServerSocket serverSocket = serverSocketChannel.socket();
-        serverSocket.bind(new InetSocketAddress(port));
-
-        selector = Selector.open();
-        serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+ public class NIOServer02 {
+ 
+     public static void main(String[] args) throws IOException {
+         //得到一个ServerSocketChanel对象
+         ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
+         //得到一个selector对象
+         Selector selector = Selector.open();
+         //绑定一个端口号
+         serverSocketChannel.bind(new InetSocketAddress(9999));
+         //设置非阻塞方式
+         serverSocketChannel.configureBlocking(false);
+         //把ServerSocketChannel对象注册给Selector对象
+         serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+         while (true) {
+             //监控客户端
+             if (selector.select(2000) == 0) {
+                 System.out.println("Server:没有客户端搭理我,我就干点别的事");
+                 continue;
+             }
+             //得到SelectionKey,判断通道里的事件
+             Set<SelectionKey> selectionKeys = selector.selectedKeys();
+             Iterator<SelectionKey> keyIterator = selectionKeys.iterator();
+             while (keyIterator.hasNext()) {
+                 SelectionKey key = keyIterator.next();
+                 if (key.isAcceptable()) {//客户端连接请求
+                     System.out.println("OP_ACCEPT");
+                     SocketChannel socketChannel = serverSocketChannel.accept();
+                     socketChannel.configureBlocking(false);
+                     socketChannel.register(selector, SelectionKey.OP_READ,ByteBuffer.allocate(1024));
+                 }
+                 if (key.isReadable()) {//读取客户端数据事件
+                     SocketChannel socketChannel = (SocketChannel) key.channel();//得到与之关联的通道
+                     ByteBuffer byteBuffer = (ByteBuffer) key.attachment();//得到与之关联的共享数据
+                     socketChannel.read(byteBuffer);//从通道里读数据
+                     System.out.println("客户端发来数据:"+new String(byteBuffer.array()).trim());
+                     byteBuffer.clear();
+                 }
+                 //手动从集合中移除当前 key,防止重复处理
+                 keyIterator.remove();
+             }
+         }
+ 
+     }
+ }
 ```
-#### 客户端
+**客户端**
 
 ```java
-  try {
-            /*
-             * 客户端向服务器端发起建立连接请求
-             */
-            SocketChannel socketChannel = SocketChannel.open();
-            socketChannel.configureBlocking(false);
-            selector = Selector.open();
-            socketChannel.register(selector, SelectionKey.OP_CONNECT);
-            socketChannel.connect(SERVER);
-            /*
-             * 轮询监听客户端上注册事件的发生
-             */
-            while (true) {
-                selector.select();
-                Set<SelectionKey> keySet = selector.selectedKeys();
-                for(final SelectionKey key : keySet){
-                    handle(key);
-                }
-                keySet.clear();
+public class NIOClient02 {
+    public static void main(String[] args) throws IOException {
+        //得到一个网络通道
+        SocketChannel socketChannel = SocketChannel.open();
+        //设置非阻塞方式
+        socketChannel.configureBlocking(false);
+        //提供服务器的IP地址和端口号
+        InetSocketAddress address = new InetSocketAddress("127.0.0.1", 9999);
+        //连接服务器端
+
+        if (!socketChannel.connect(address)) {
+            while (!socketChannel.finishConnect()) {
+                System.out.println("Client: 连接服务端的同时,我还可以干别的事情");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+        //得到一个缓冲区并存入数据
+        String msg = "hello Server";
+        ByteBuffer writeBuf = ByteBuffer.wrap(msg.getBytes());
+        //发送数据
+        socketChannel.write(writeBuf);
+        System.in.read();
+    }
+}
 ```
+<div id="chat"></div>
+
+### 网络聊天案例
+
+<div id="source"></div>
+
+### 源码分析
 
 <a href="https://juejin.im/post/5c2e23156fb9a049ff4e4009">BIO到NIO源码的一些事儿之NIO 上</a>
 

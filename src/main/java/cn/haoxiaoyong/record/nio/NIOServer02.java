@@ -43,9 +43,9 @@ public class NIOServer02 {
                     socketChannel.register(selector, SelectionKey.OP_READ,ByteBuffer.allocate(1024));
                 }
                 if (key.isReadable()) {//读取客户端数据事件
-                    SocketChannel socketChannel = (SocketChannel) key.channel();
-                    ByteBuffer byteBuffer = (ByteBuffer) key.attachment();
-                    socketChannel.read(byteBuffer);
+                    SocketChannel socketChannel = (SocketChannel) key.channel();//得到与之关联的通道
+                    ByteBuffer byteBuffer = (ByteBuffer) key.attachment();//得到与之关联的共享数据
+                    socketChannel.read(byteBuffer);//从通道里读数据
                     System.out.println("客户端发来数据:"+new String(byteBuffer.array()).trim());
                     byteBuffer.clear();
                 }
