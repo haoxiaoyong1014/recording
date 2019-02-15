@@ -40,13 +40,14 @@ public class NIOServer02 {
                     System.out.println("OP_ACCEPT");
                     SocketChannel socketChannel = serverSocketChannel.accept();
                     socketChannel.configureBlocking(false);
-                    socketChannel.register(selector, SelectionKey.OP_READ);
+                    socketChannel.register(selector, SelectionKey.OP_READ,ByteBuffer.allocate(1024));
                 }
                 if (key.isReadable()) {//读取客户端数据事件
                     SocketChannel socketChannel = (SocketChannel) key.channel();
                     ByteBuffer byteBuffer = (ByteBuffer) key.attachment();
                     socketChannel.read(byteBuffer);
-                    System.out.println("客户端发来数据:"+new String(byteBuffer.array()));
+                    System.out.println("客户端发来数据:"+new String(byteBuffer.array()).trim());
+                    byteBuffer.clear();
                 }
                 //手动从集合中移除当前 key,防止重复处理
                 keyIterator.remove();

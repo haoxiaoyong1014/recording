@@ -19,6 +19,7 @@ public class NIOClient02 {
         //提供服务器的IP地址和端口号
         InetSocketAddress address = new InetSocketAddress("127.0.0.1", 9999);
         //连接服务器端
+
         if (!socketChannel.connect(address)) {
             while (!socketChannel.finishConnect()) {
                 System.out.println("Client: 连接服务端的同时,我还可以干别的事情");
