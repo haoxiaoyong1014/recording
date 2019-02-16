@@ -28,14 +28,14 @@ public class NIOChatClient {
 
     public NIOChatClient() throws IOException {
 
-        /*//得到选择器
-        selector = Selector.open();*/
+        //得到选择器
+        //selector = Selector.open();
         //连接远程服务器
         socketChannel = SocketChannel.open();
         //设置非阻塞
         socketChannel.configureBlocking(false);
-      /*  //注册选择器并设置为 read
-        socketChannel.register(selector, SelectionKey.OP_READ);*/
+        //注册选择器并设置为 read
+        //socketChannel.register(selector, SelectionKey.OP_READ);
         //提供服务器端的IP和端口号
         InetSocketAddress address = new InetSocketAddress(HOST, PORT);
         //连接服务器
@@ -54,7 +54,7 @@ public class NIOChatClient {
         //如果控制台输入的 bye 就关闭通道,结束聊天
         if (msg.equalsIgnoreCase("bye")) {
             socketChannel.close();
-            socketChannel = null;
+            //socketChannel = null;
             return;
         }
         msg = userName + "说:" + msg;
@@ -67,11 +67,11 @@ public class NIOChatClient {
     public void receiveMsg() throws IOException {
         //得到一个缓冲区
         ByteBuffer buffer = ByteBuffer.allocate(1024);
-        //读取数据并存储到缓冲区
-        int size = socketChannel.read(buffer);
-        if (size > 0) {
-            String msg = new String(buffer.array());
-            System.out.println(msg.trim());
+            //读取数据并存储到缓冲区
+            int size = socketChannel.read(buffer);
+            if (size > 0) {
+                String msg = new String(buffer.array());
+                System.out.println(msg.trim());
         }
     }
     //从服务端接收数据

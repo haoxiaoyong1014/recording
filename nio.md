@@ -368,6 +368,18 @@ public class NIOClient02 {
 
 ### 网络聊天案例
 
+**服务端代码:**
+
+<a href="https://github.com/haoxiaoyong1014/recording/blob/master/src/main/java/cn/haoxiaoyong/record/nio/NIOChatServer.java">NIOChatServer</a>
+
+**客户端代码**
+
+<a href="https://github.com/haoxiaoyong1014/recording/blob/master/src/main/java/cn/haoxiaoyong/record/nio/NIOChatClient.java">NIOChatClient</a>
+
+**启动客户端代码**
+
+<a href="https://github.com/haoxiaoyong1014/recording/blob/master/src/test/java/cn/haoxiaoyong/record/nio/TestChat.java">TestChat</a>
+
 <div id="source"></div>
 
 ### 源码分析
