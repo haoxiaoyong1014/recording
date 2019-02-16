@@ -44,20 +44,25 @@
 
 **[NIO编程](https://github.com/haoxiaoyong1014/recording/blob/master/nio.md)**    
 
-* 网络IO的介绍
-
-* nio的概述
-
-* channel通道
-
-* buffer缓冲区
-
-* selector选择器
-
-* nio读取文件
-
-* nio实例
+     网络IO的介绍
     
+     nio的概述
+    
+     channel通道
+    
+     FileChannel文件IO
+    
+     buffer缓冲区
+    
+    selector选择器
+    
+    selectionKey
+    
+    NIO的入门案例
+    
+    网络聊天案例
+    
+    源码分析    
     
 **Netty框架**   
 
