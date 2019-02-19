@@ -14,12 +14,12 @@ public class TestBusiness {
                 threadExecute(business, "sub");
             }
         }).start();
-        threadExecute(business, "main");
+        threadExecute(business, "Main");
     }
     public static void threadExecute(Business business, String threadType) {
         for(int i = 0; i < 100; i++) {
             try {
-                if("main".equals(threadType)) {
+                if("Main".equals(threadType)) {
                     business.main(i);
                 } else {
                     business.sub(i);

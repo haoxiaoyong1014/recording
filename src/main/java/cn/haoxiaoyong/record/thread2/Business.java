@@ -16,7 +16,7 @@ public class Business {
             this.wait();
         }
         for (int i = 0; i < 100; i++) {
-            System.out.println("main thread seq of " + i + ", loop of " + loop);
+            System.out.println("Main thread seq of " + i + ", loop of " + loop);
         }
         bool = true;
         this.notify();
