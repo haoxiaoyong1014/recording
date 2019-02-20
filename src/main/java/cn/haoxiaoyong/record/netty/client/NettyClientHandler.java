@@ -2,7 +2,6 @@ package cn.haoxiaoyong.record.netty.client;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.CharsetUtil;
@@ -19,6 +18,7 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
         System.out.println("Client: handlerAdded...");
+
     }
 
     //通道就绪事件
@@ -27,6 +27,7 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
         System.out.println("Client: channelActive...");
         System.out.println("Client: "+ctx);
         ctx.writeAndFlush(Unpooled.copiedBuffer("老板,还钱吧",CharsetUtil.UTF_8));
+
     }
 
     //读取数据事件
@@ -51,7 +52,6 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
-        ctx.channel().closeFuture().sync();
         System.out.println("Client Close");
     }
 }

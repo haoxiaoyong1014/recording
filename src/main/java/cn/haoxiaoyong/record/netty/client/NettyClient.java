@@ -29,6 +29,7 @@ public class NettyClient {
         if(cf.isSuccess()){
             System.out.println("Client Netty is Starting....");
         }
+        cf.channel().closeFuture().sync();
         group.shutdownGracefully().syncUninterruptibly();
 
     }
