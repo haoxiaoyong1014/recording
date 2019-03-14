@@ -66,7 +66,18 @@
      
      IO 对比总结  
      
- **[BIO,NIO AIO 总结](https://github.com/haoxiaoyong1014/recording/blob/master/sumUp.md)**     
+ **[BIO,NIO AIO 总结](https://github.com/haoxiaoyong1014/recording/blob/master/sumup.md)**   
+ 
+    同步异步
+    
+    阻塞非阻塞
+    
+    BIO总结
+    
+    NIO总结
+    
+    AIO总结
+      
     
 **Netty框架**   
 
