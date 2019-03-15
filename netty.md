@@ -36,3 +36,42 @@ Reactor多线程模型是由一组NIO线程来处理IO操作（之前是单个�
 ![image.png](https://upload-images.jianshu.io/upload_images/15181329-5587e7ef5d765535.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 这种线程模型是Netty推荐使用的线程模型,这种模型适用于高并发场景，一组线程池接收请求，一组线程池处理IO。
+
+
+#### 核心API介绍:
+
+**ChannelHandler及其实现类**
+
+ChannelHandler 接口定义了许多事件处理的方法，我们可以通过重写这些方法去实现具体的业务逻辑。API 关系如下图所示：
+
+![5761552648514_.pic_hd.jpg](https://upload-images.jianshu.io/upload_images/15181329-30857f88a29349ef.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+我们经常需要定义一个Handler类去继承ChannelInboundHandlerAdapter,然后通过重写相应的方法实现业务的逻辑,我们接下来看看一般
+都需要重写哪些方法:
+
+    1,public void channelActive(ChannelHanndlerContext ctx),通道就绪事件(channel为活跃状态)
+    
+    2,public void channelInactive(ChannelHanndlerContext ctx),通道就绪事件(channel为活不跃状态,但客户端和服务端端口之后)
+
+    3,public void channelRead(ChannelHandlerContext ctx, Object msg),通道读取数据事件
+
+    4,public void channelReadComplete(ChannelHandlerContext ctx),数据读取完毕事件
+    
+    5,public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause),通道发生异常事件
+    
+    6,public void handlerAdded(ChannelHandlerContext ctx), 助手类添加(Handler类添加),当有新的客户端连接服务器之后,就会自动调用这个方法 
+    
+    7,public void handlerRemoved(ChannelHandlerContext ctx)助手类移除(Handler类移除)
+    
+
+执行顺序:  6,1,3,4,2,7
+        
+**Pipeline 和ChannelPipeline**
+
+ChannelPipeline 是一个Handler的集合,它负责处理和拦截inbound或者outbound的事件和操作,相当于一个贯穿Netty的链.
+
+![5771552651783_.pic.jpg](https://upload-images.jianshu.io/upload_images/15181329-7bcae6ecba2af90f.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+    ChannelPipeline addFirst(ChannelHandler... handlers)，把一个业务处理类（handler）添加到链中的第一个位置
+
+    ChannelPipeline addLast(ChannelHandler... handlers)，把一个业务处理类（handler）添加到链中的最后一个位置(常用)

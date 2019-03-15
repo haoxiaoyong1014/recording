@@ -19,13 +19,11 @@ public class TCPServer {
         ServerSocket serverSocket = null;
         try {
             serverSocket = new ServerSocket(9999);
-            serverSocket.setSoTimeout(2);
+           /* serverSocket.setSoTimeout(2000);*/
             while (true) {
-
                 System.out.println("没有客户端连接,我阻塞在这里了.....");
                 //2,监听客户端
                 Socket accept = serverSocket.accept();//阻塞,
-
                 System.out.println("有客户端连接了...");
                 //3,从连接中取出输入流来接收消息
                 InputStream inputStream = accept.getInputStream();//阻塞

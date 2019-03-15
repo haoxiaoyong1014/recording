@@ -44,7 +44,7 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<String> {
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         String address = ctx.channel().remoteAddress().toString().substring(1);
         channels.remove(ctx.channel());
-        System.out.println(address + " 离线了...");
+        System.out.println(address + " 离线了.....当前在线人数:"+channels.size());
     }
 
     //发生异常事件
