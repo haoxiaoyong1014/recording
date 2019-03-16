@@ -372,7 +372,6 @@ Netty结合webSocket做简单的聊天案例
 窗口B回复窗口A的消息
 ![5801552706540_.pic.jpg](https://upload-images.jianshu.io/upload_images/15181329-8a302f144acab26e.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-
 这里只列出前端代码:
 
 ```html
@@ -415,5 +414,7 @@ Netty结合webSocket做简单的聊天案例
 **后端代码地址: <a href="https://github.com/haoxiaoyong1014/netty-chat">netty-chat</a>**
 
 
-**使用netty做心跳检测**
+#### 使用netty做心跳检测
+
+<a href="https://github.com/haoxiaoyong1014/springboot-netty">springboot整合netty做心跳检测</a>
                   
