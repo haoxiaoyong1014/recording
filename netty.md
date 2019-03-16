@@ -143,5 +143,33 @@ BossEventLoopGroup 通常是一个单线程的EventLoop，EventLoop 维护着一
     
     public Future<?> shutdownGracefully(),断开连接,关闭线程
     
-    
+**ServerBootstrap和Bootstrap** 
+
+ServerBootstrap是Netty中的服务器端启动助手,通过它可以完成服务器端的各种配置;Bootstrap是Netty中的客户端启动助手;
+通过它可以完成客户端的各种配置,常用方法如下:
+
+     public ServerBootstrap group(EventLoopGroup parentGroup, EventLoopGroup childGroup),该方法用于服务器端，用来设置两个EventLoop
+     
+     public B group(EventLoopGroup group),该方法用于客户端，用来设置一个EventLoop
+     
+     public B channel(Class<? extends C> channelClass),该方法用来设置一个服务器端的通道实现
+     
+     public <T> B option(ChannelOption<T> option, T value),用来给ServerChannel 添加配置
+     
+     public <T> ServerBootstrap childOption(ChannelOption<T> childOption, T value),用来给接收到的通道添加配置
+     
+     public ServerBootstrap childHandler(ChannelHandler childHandler),该方法用来设置业务处理类（自定义的handler）
+     
+     public ChannelFuture bind(int inetPort) ，该方法用于服务器端，用来设置占用的端口号
+     
+     public ChannelFuture connect(String inetHost, int inetPort) ，该方法用于客户端，用来连接服务器端 
+  
+**Unpooled 类**   
+
+这是Netty 提供的一个专门用来操作缓冲区的工具类，常用方法如下所示:
+
+    public static ByteBuf copiedBuffer(CharSequence string, Charset charset)，通过给定的数据
+    和字符编码返回一个ByteBuf 对象（类似于NIO 中的ByteBuffer 对象）
+  
+      
                      
