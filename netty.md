@@ -172,4 +172,248 @@ ServerBootstrap是Netty中的服务器端启动助手,通过它可以完成服�
     和字符编码返回一个ByteBuf 对象（类似于NIO 中的ByteBuffer 对象）
   
       
-                     
+#### 入门案例   
+
+
+**添加依赖**
+
+```xml
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.21.Final</version>
+        </dependency>
+```
+**NettyServer(服务端)**
+```java
+public class NettyServer {
+
+    public static void main(String[] args) throws InterruptedException {
+        //创建一个线程组:用来处理网络事件,(接收客户端连接)
+        EventLoopGroup bossGroup = new NioEventLoopGroup();
+        //创建一个线程组:用来处理网络事件(处理通道IO操作)
+        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        //创建服务端启动助手来配置参数
+        ServerBootstrap bootstrap = new ServerBootstrap();
+        bootstrap.group(bossGroup, workerGroup)
+                .channel(NioServerSocketChannel.class)
+                .option(ChannelOption.SO_BACKLOG, 128)
+                .childOption(ChannelOption.SO_KEEPALIVE, true)
+                .childHandler(new ChannelInitHandler());
+        //启动服务器端口并绑定端口,等待接收客户端的链接(非阻塞)
+        ChannelFuture cf = bootstrap.bind(9999).sync();
+        //关闭通道, 关闭线程池
+        if (cf.isSuccess()) {
+            System.out.println("...Server Netty is Starting...");
+        }
+        cf.channel().closeFuture().sync();
+        bossGroup.shutdownGracefully().syncUninterruptibly();
+        System.out.println("Server Close..");
+        workerGroup.shutdownGracefully().syncUninterruptibly();
+    }
+}
+
+```
+**ChannelInitHandler(服务端通道初始化对象)**
+```java
+public class ChannelInitHandler extends ChannelInitializer<SocketChannel> {
+    @Override
+    protected void initChannel(SocketChannel ch) throws Exception {
+        ChannelPipeline pipeline = ch.pipeline();
+        //往Pipline链中添加自定义的业务处理 handler
+        pipeline.addLast(new NettyServerHandler());  //服务器端业务处理类
+        System.out.println("...Server is ready..");
+    }
+}
+```
+**NettyServerHandler(自定义服务器端业务处理类)**
+```java
+public class NettyServerHandler extends ChannelInboundHandlerAdapter {
+
+
+    //监听到客户端连接事件
+    @Override
+    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("Server: handlerAdded");
+    }
+
+    //监听到客户端活跃
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("Server: channelActive");
+    }
+
+
+    //服务端读取
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        System.out.println("Server:" + ctx);
+        ByteBuf buf = (ByteBuf) msg;
+        System.out.println("客户端发来的消息 :"+buf.toString(CharsetUtil.UTF_8));
+    }
+
+    //服务端读取数据完毕
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+        ctx.writeAndFlush(Unpooled.copiedBuffer("你说的啥,我没有听见",CharsetUtil.UTF_8));
+    }
+
+    //发生异常
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        cause.printStackTrace();
+        ctx.close();
+    }
+}
+```
+**NettyClient(客户端)**
+
+```java
+public class NettyClient {
+
+    public static void main(String[] args) throws InterruptedException {
+
+        //创建一个EventLoopGroup线程组
+        EventLoopGroup group = new NioEventLoopGroup();
+        //创建一个客户端启动助手
+        Bootstrap bootstrap = new Bootstrap();
+        bootstrap.group(group)
+                .channel(NioSocketChannel.class)
+                .handler(new ChannelInitHanndler());
+
+        //启动客户端.等待连接上服务器端(非阻塞)
+        ChannelFuture cf = bootstrap.connect("127.0.0.1", 9999).sync();
+        if(cf.isSuccess()){
+            System.out.println("Client Netty is Starting....");
+        }
+        cf.channel().closeFuture().sync();
+        group.shutdownGracefully().syncUninterruptibly();
+
+    }
+}
+```   
+
+**ChannelInitHanndler(客户端通道初始化对象)**
+```java
+public class ChannelInitHanndler extends ChannelInitializer<SocketChannel>{
+    @Override
+    protected void initChannel(SocketChannel ch) throws Exception {
+        ChannelPipeline pipeline = ch.pipeline();
+        pipeline.addLast(new NettyClientHandler());
+        System.out.println("......Client is ready.......");
+    }
+}
+``` 
+**NettyClientHandler(自定义客户端业务处理类)**
+```java
+public class NettyClientHandler extends ChannelInboundHandlerAdapter {
+
+
+    //监听到链接
+    @Override
+    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("Client: handlerAdded...");
+
+    }
+
+    //通道就绪事件
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("Client: channelActive...");
+        System.out.println("Client: "+ctx);
+        ctx.writeAndFlush(Unpooled.copiedBuffer("老板,还钱吧",CharsetUtil.UTF_8));
+
+    }
+
+    //读取数据事件
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        ByteBuf buf = (ByteBuf) msg;
+        System.out.println("服务器端发来的消息: "+buf.toString(CharsetUtil.UTF_8));
+
+    }
+
+    //数据读取完毕事件
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+        super.channelReadComplete(ctx);
+    }
+
+    //异常发生事件
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        ctx.close();
+    }
+
+    @Override
+    public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("Client Close");
+    }
+}
+```
+
+#### 网络聊天案例
+
+就不贴出代码了:
+
+<a href="https://github.com/haoxiaoyong1014/recording/tree/master/src/main/java/cn/haoxiaoyong/record/netty/chat">具体代码点击这里->chat</a>
+
+![image.png](https://upload-images.jianshu.io/upload_images/15181329-47162642f87c281d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+#### 整合WebSocket
+
+Netty结合webSocket做简单的聊天案例
+
+案例效果图:
+
+窗口A给窗口B发送消息:
+![5791552706434_.pic.jpg](https://upload-images.jianshu.io/upload_images/15181329-435eab3ddc05f7ed.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+窗口B回复窗口A的消息
+![5801552706540_.pic.jpg](https://upload-images.jianshu.io/upload_images/15181329-8a302f144acab26e.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+
+这里只列出前端代码:
+
+```html
+<body>
+<input type="text" id="message">
+<input type="button" value="发送消息" onclick="sendMsg()">
+<br/>
+接收到消息:
+<p id="server_message" style="background-color: #AAAAAA"></p>
+
+<script>
+    var websocket = null;
+    //判断当前浏览器是否支持 webSocket
+    if (window.WebSocket) {
+        websocket = new WebSocket("ws://127.0.0.1:9001/ws");
+        websocket.onopen = function (ev) {
+            console.log("建立连接");
+        }
+        websocket.onclose = function (ev) {
+            console.log("断开连接");
+        }
+        websocket.onmessage = function (ev) {
+            console.log("接收到服务器的消息" + ev.data);
+            var server_message = document.getElementById("server_message");
+            server_message.innerHTML += ev.data + "<br/>";
+        }
+    } else {
+        alert("当前浏览器不支持 webSocket")
+    }
+
+    function sendMsg() {
+        var message = document.getElementById("message");
+        websocket.send(message.value)
+    }
+</script>
+</body>
+```
+后端代码有详细的注释,具体看案例中的代码; 
+
+**后端代码地址: <a href="https://github.com/haoxiaoyong1014/netty-chat">netty-chat</a>**
+
+
+**使用netty做心跳检测**
+                  
