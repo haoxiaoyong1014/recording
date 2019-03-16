@@ -417,4 +417,8 @@ Netty结合webSocket做简单的聊天案例
 #### 使用netty做心跳检测
 
 <a href="https://github.com/haoxiaoyong1014/springboot-netty">springboot整合netty做心跳检测</a>
-                  
+  
+  
+#### 使用netty做文件传输
+
+<a href="https://github.com/haoxiaoyong1014/netty-file">使用netty做文件传输</a>                  

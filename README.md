@@ -92,6 +92,8 @@
      整合WebSocket
      
      使用netty做心跳检测
+     
+     使用netty做文件传输
     
 **自定义RPC**   
 
