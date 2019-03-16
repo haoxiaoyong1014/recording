@@ -69,9 +69,79 @@ ChannelHandler 接口定义了许多事件处理的方法，我们可以通过�
 **Pipeline 和ChannelPipeline**
 
 ChannelPipeline 是一个Handler的集合,它负责处理和拦截inbound或者outbound的事件和操作,相当于一个贯穿Netty的链.
+每一个ChannelHandler都会有一个ChannelHandlerContext(上下文对应),下面会介绍到`ChannelHandlerContext`
 
 ![5771552651783_.pic.jpg](https://upload-images.jianshu.io/upload_images/15181329-7bcae6ecba2af90f.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
     ChannelPipeline addFirst(ChannelHandler... handlers)，把一个业务处理类（handler）添加到链中的第一个位置
 
     ChannelPipeline addLast(ChannelHandler... handlers)，把一个业务处理类（handler）添加到链中的最后一个位置(常用)
+
+**ChannelHandlerContext**
+
+这是事件处理上下文对象,Pipeline链中的实际处理节点.每个处理节点ChannelHandlerContext 中包含一个具体的事件处理器ChannelHandler ， 同时                             
+ChannelHandlerContext 中也绑定了对应的pipeline 和Channel 的信息，方便对ChannelHandler进行调用。常用方法如下所示：
+
+    ChannelFuture close(),关闭通道
+    
+    ChannelOutboundInvoker flush(),刷新
+    
+    ChannelFuture writeAndFlush(Object msg),将数据写到ChannelPipeline 中当前ChannelHandler 的下一个ChannelHandler 开始处理（出站）  
+    
+    Channel channel(), 获取当前通道,之后可以通过当前通道获取对应通道ID包括(长ID和短ID),例如: channelHandlerContext.channel().id().asLongText(),
+    
+**ChannelOption**
+
+Netty在创建Channel实例后,一般都需要设置ChannelOption参数,ChannelOption是Socket的标准参数,而非Netty独创的,常用参数
+配置有:
+
+  * ChannelOption.SO_BACKLOG
+    
+        对应TCP/IP协议listen函数中的 backlog参数,用来初始化服务器可连接队列大小,服务端处理客户端连接请求是顺序处理的
+        ,所以同一时间只能处理一个客户端连接,多个客户端来的时候,服务端将不能处理的客户端连接请求放到队列中等待处理,backlog
+        参数指定了队列大小.
+        
+  * ChannelOption.SO_KEEPALIVE,一直保持连接活动状态    
+
+**ChannelFuture**
+
+表示Channel 中异步I/O 操作的结果，在Netty 中所有的I/O 操作都是异步的，I/O 的调用会直接返回，调用者并不能立刻获得结果，但是可以通过ChannelFuture 来获取I/O 操作的处理状态.
+
+常用方法如下所示：
+
+    Channel channel(),返回当前正在进行IO 操作的通道
+    
+    ChannelFuture sync(),等待异步操作执行完毕
+    
+    ChannelFuture addListener(GenericFutureListener<? extends Future<? super Void>> listener),添加监听器
+    
+    ChannelFuture removeListener(GenericFutureListener<? extends Future<? super Void>> listener),移除监听
+    
+    boolean isSuccess(),当且仅当I/O操作完成时,返回true
+    
+    
+**EventLoopGroup 和其实现类NioEventLoopGroup**    
+
+EventLoopGroup 是一组EventLoop 的抽象，Netty 为了更好的利用多核CPU 资源，一般会有多个EventLoop 同时工作，每个EventLoop 维护着一个Selector 实例。
+EventLoopGroup 提供next 接口，可以从组里面按照一定规则获取其中一个EventLoop来处理任务。在Netty 服务器端编程中，我们一般都需要提供两个EventLoopGroup，例如：
+
+BossEventLoopGroup 和WorkerEventLoopGroup。
+
+通常一个服务端口即一个ServerSocketChannel 对应一个Selector 和一个EventLoop 线程。BossEventLoop 负责接收客户端的连接并将SocketChannel 交给WorkerEventLoopGroup 来进
+行IO 处理，如下图所示：
+  
+  
+![image.png](https://upload-images.jianshu.io/upload_images/15181329-f70b09c97d3d1bee.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+BossEventLoopGroup 通常是一个单线程的EventLoop，EventLoop 维护着一个注册了ServerSocketChannel 的Selector 实例，BossEventLoop 不断轮询Selector 将连接事件分离出来，
+通常是OP_ACCEPT 事件，然后将接收到的SocketChannel 交给WorkerEventLoopGroup，WorkerEventLoopGroup 会由next 选择其中一个EventLoopGroup 来将这个SocketChannel 注
+册到其维护的Selector 并对其后续的IO 事件进行处理。
+
+常用方法如下所示:
+
+    public NioEventLoopGroup(),构造方法
+    
+    public Future<?> shutdownGracefully(),断开连接,关闭线程
+    
+    
+                     
