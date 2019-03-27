@@ -31,5 +31,11 @@
             <artifactId>netty-all</artifactId>
             <version>4.1.21.Final</version>
         </dependency>
+        <!--rpc 需要-->
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.10</version>
+        </dependency>
     </dependencies>
 </project>
