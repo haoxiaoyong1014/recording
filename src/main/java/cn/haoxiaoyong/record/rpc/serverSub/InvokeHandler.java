@@ -16,7 +16,7 @@ public class InvokeHandler extends ChannelInboundHandlerAdapter {
         int lastDot = classInfo.getClassName().lastIndexOf(".");
         String interfaceName = classInfo.getClassName().substring(lastDot);
         Class<?> superClass = Class.forName(interfacePath + interfaceName);
-        Reflections reflections = new Reflections(interfaceName);
+        Reflections reflections = new Reflections(interfacePath);
         //得到某接口下的所有实现类
         Set<Class<?>> ImplClassSet = (Set<Class<?>>) reflections.getSubTypesOf(superClass);
         if (ImplClassSet.size() == 0) {

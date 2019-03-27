@@ -50,7 +50,6 @@ public class NettyRpcProxy {
                                             .addLast("decoder", new ObjectDecoder(Integer.MAX_VALUE, ClassResolvers.cacheDisabled(null)))
                                             //客户端业务处理类
                                             .addLast("handler", resultHandler);
-
                                 }
                             });
                     ChannelFuture future = bootstrap.connect("127.0.0.1", 9999).sync();
