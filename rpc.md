@@ -283,7 +283,7 @@ public class TestNettyRpc {
 
 ![image.png](https://upload-images.jianshu.io/upload_images/15181329-2c8dface3b6daa6e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-**使用方式**
+**使用方式:**
 
 1,首先启动服务方: <a href="https://github.com/haoxiaoyong1014/recording/blob/master/src/main/java/cn/haoxiaoyong/record/rpc/serverSub/NettyRpcServer.java">NettyRpcServer</a>
 中的main方法;

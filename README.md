@@ -95,8 +95,14 @@
      
      使用netty做文件传输
     
-**自定义RPC**   
+**[自定义RPC](https://github.com/haoxiaoyong1014/recording/blob/master/rpc.md)**   
 
      整体分析
     
      设置和实现
+     
+     代码实现
+     
+     使用方式
+     
+     测试结果
