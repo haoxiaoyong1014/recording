@@ -40,6 +40,5 @@ public class InvokeHandler extends ChannelInboundHandlerAdapter {
         //通过反射调用实现类的方法
         Object result = method.invoke(clazz, classInfo.getObjects());
         ctx.writeAndFlush(result);
-
     }
 }

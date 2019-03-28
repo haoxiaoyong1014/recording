@@ -31,10 +31,9 @@ public class NettyRpcProxy {
                 classInfo.setMethodName(method.getName());
                 classInfo.setObjects(args);
                 classInfo.setTypes(method.getParameterTypes());
-
                 //开始用Netty发送数据
                 EventLoopGroup group = new NioEventLoopGroup();
-                ResultHandler resultHandler=new ResultHandler();
+                ResultHandler resultHandler = new ResultHandler();
                 try {
                     Bootstrap bootstrap = new Bootstrap();
                     bootstrap.group(group)
@@ -61,6 +60,6 @@ public class NettyRpcProxy {
                 return resultHandler.getResponse();
             }
         });
-
     }
+
 }

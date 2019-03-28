@@ -1,6 +1,6 @@
 package cn.haoxiaoyong.record.rpc.server;
 
-public interface HelloRpc {
+public interface HelloRPC {
 
     String hello(String name);
 }
