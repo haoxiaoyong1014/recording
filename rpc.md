@@ -278,3 +278,14 @@ public class TestNettyRpc {
 }
 ``` 
 消费方不需要知道底层的网络实现细节，就像调用本地方法一样成功发起了两次远程调用。
+
+**测试结果:**
+
+![image.png](https://upload-images.jianshu.io/upload_images/15181329-2c8dface3b6daa6e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+**使用方式**
+
+1,首先启动服务方: <a href="https://github.com/haoxiaoyong1014/recording/blob/master/src/main/java/cn/haoxiaoyong/record/rpc/serverSub/NettyRpcServer.java">NettyRpcServer</a>
+中的main方法;
+
+2,然后启动服务调用方: <a href="https://github.com/haoxiaoyong1014/recording/blob/master/src/main/java/cn/haoxiaoyong/record/rpc/client/TestNettyRpc.java">TestNettyRpc</a>中的测试方法;
