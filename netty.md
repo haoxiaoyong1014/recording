@@ -567,4 +567,5 @@ Netty提供了多个解码器，可以进行分包的操作，分别是：
 .addLast(new ProtobufVarint32LengthFieldPrepender())
 ```
 这个编解码工具可以简单理解为是在消息体中加了一个 32 位长度的整形字段，用于表明当前消息长度。
-                     
+ 
+<a href="https://www.jianshu.com/p/dc26e944da95">netty源码分析之拆包器的奥秘</a>                    
