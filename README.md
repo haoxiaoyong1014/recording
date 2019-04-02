@@ -94,6 +94,10 @@
      使用netty做心跳检测
      
      使用netty做文件传输
+     
+     netty编码解码
+     
+     netty粘包拆包
     
 **[自定义RPC](https://github.com/haoxiaoyong1014/recording/blob/master/rpc.md)**   
 
