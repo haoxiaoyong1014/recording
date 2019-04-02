@@ -539,6 +539,7 @@ Protocol 是Google 发布的开源项目，全称Google Protocol Buffers，特�
 ![image.png](https://upload-images.jianshu.io/upload_images/15181329-152e53d3cf533bab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 **解决方法由如下几种：**
+
 1、消息定长，报文大小固定长度，例如每个报文的长度固定为200字节，如果不够空位补空格；
 
 2、包尾添加特殊分隔符，例如每条报文结束都添加回车换行符（例如FTP协议）或者指定特殊字符作为报文分隔符，接收方通过特殊分隔符切分报文区分；
@@ -566,6 +567,4 @@ Netty提供了多个解码器，可以进行分包的操作，分别是：
 .addLast(new ProtobufVarint32LengthFieldPrepender())
 ```
 这个编解码工具可以简单理解为是在消息体中加了一个 32 位长度的整形字段，用于表明当前消息长度。
-   
-   
-addLast(new LengthFieldBasedFrameDecoder(1024 * 1024, 0, 4, 0, 0))                     
+                     
