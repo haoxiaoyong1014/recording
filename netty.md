@@ -451,7 +451,7 @@ Protobuf 是Google 发布的开源项目，全称Google Protocol Buffers，特�
 * 高性能，高可靠性
 * 使用protobuf 编译器能自动生成代码，Protobuf 是将类的定义使用.proto 文件进行描述，然后通过protoc.exe 编译器根据.proto 自动生成.java 文件
 
-1, <a href="">首先是安装</a>
+1, <a href="https://github.com/haoxiaoyong1014/recording/blob/master/proto.md">首先是安装</a>
 
 2, 使用:
 
