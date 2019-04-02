@@ -478,10 +478,14 @@ Protobuf 是Google 发布的开源项目，全称Google Protocol Buffers，特�
             int32 id = 1; //(4)
             string appid = 2;
         }
- (1): 版本号   
+ (1): 版本号 
+   
  (2): 设置生成的Java类名  
+ 
  (3): 内部类的类名,真正的POJO
+ 
  (4): 设置类中的属性,符号后是序号,不是属性值 
+ 
 注意个文件名`BaseRequest.proto`必须是 .proto后缀
 
   BaseResponse.proto:
@@ -510,7 +514,7 @@ Protobuf 是Google 发布的开源项目，全称Google Protocol Buffers，特�
 
 **Server**
 
-![image.png](https://upload-images.jianshu.io/upload_images/15181329-20dfc79981f52e92.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![image.png](https://upload-images.jianshu.io/upload_images/15181329-ad500ed55c41042f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 上述代码在编写服务器端程序时，要向Pipeline 链中添加ProtobufDecoder 解码器对象。
 
 ![image.png](https://upload-images.jianshu.io/upload_images/15181329-17ffeee31366b57b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
