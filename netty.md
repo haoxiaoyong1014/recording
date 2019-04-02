@@ -444,18 +444,18 @@ Netty结合webSocket做简单的聊天案例
     Netty 本身自带的ObjectDecoder 和ObjectEncoder 可以用来实现POJO 对象或各种业务对象的编码和解码，但其内部使用的仍是Java 序列化技术，所以我们不建议使用。因此对
     于POJO 对象或各种业务对象要实现编码和解码，我们需要更高效更强的技术。  
     
-**Google 的Protobuf**  
+**Google 的Protocol(Google出品必然牛x)**  
 
-Protobuf 是Google 发布的开源项目，全称Google Protocol Buffers，特点如下：
+Protocol 是Google 发布的开源项目，全称Google Protocol Buffers，特点如下：
 * 支持跨平台、多语言（支持目前绝大多数语言，例如C++、C#、Java、python 等）
 * 高性能，高可靠性
-* 使用protobuf 编译器能自动生成代码，Protobuf 是将类的定义使用.proto 文件进行描述，然后通过protoc.exe 编译器根据.proto 自动生成.java 文件
+* 使用Protocol 编译器能自动生成代码，Protocol 是将类的定义使用.proto 文件进行描述，然后通过protoc.exe 编译器根据.proto 自动生成.java 文件
 
 1, <a href="https://github.com/haoxiaoyong1014/recording/blob/master/proto.md">首先是安装</a>
 
 2, 使用:
 
-   * 2.1 引入protobuf的坐标
+   * 2.1 引入Protocol的坐标
  ```xml
         <dependency>
             <groupId>com.google.protobuf</groupId>
@@ -520,6 +520,52 @@ Protobuf 是Google 发布的开源项目，全称Google Protocol Buffers，特�
 ![image.png](https://upload-images.jianshu.io/upload_images/15181329-17ffeee31366b57b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 上述代码在服务器端接收数据时,直接就可以把数据转换成 pojo 使用,非常方便
 
-至此使用Google 的Protobuf就结束了...
+至此使用Google 的Protocol就结束了...
 
-#### netty粘包拆包                
+#### netty粘包拆包 
+
+**什么是粘包、拆包？**
+在基于流的传输里比如TCP/IP，接收到的数据会先被存储到一个socket接收缓冲里。不幸的是，基于流的传输并不是一个数据包队列，而是一个字节队列。即使你发送了2个独立的数据包，操作系统也不会作为2个消息处理而仅仅是作为一连串的字节而言。
+因此这是不能保证你远程写入的数据就会准确地读取。举个例子，让我们假设操作系统的TCP/TP协议栈已经接收了3个数据包：
+  
+![image.png](https://upload-images.jianshu.io/upload_images/15181329-152e53d3cf533bab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+ 
+由于基于流传输的协议的这种普通的性质，在你的应用程序里读取数据的时候会有很高的可能性被分成下面的片段
+
+![image.png](https://upload-images.jianshu.io/upload_images/15181329-c2ee5f5a27c60f83.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+因此，一个接收方不管他是客户端还是服务端，都应该把接收到的数据整理成一个或者多个更有意思并且能够让程序的业务逻辑更好理解的数据。在上面的例子中，接收到的数据应该被构造成下面的格式：
+
+![image.png](https://upload-images.jianshu.io/upload_images/15181329-152e53d3cf533bab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+**解决方法由如下几种：**
+1、消息定长，报文大小固定长度，例如每个报文的长度固定为200字节，如果不够空位补空格；
+
+2、包尾添加特殊分隔符，例如每条报文结束都添加回车换行符（例如FTP协议）或者指定特殊字符作为报文分隔符，接收方通过特殊分隔符切分报文区分；
+
+3、将消息分为消息头和消息体，消息头中包含表示信息的总长度（或者消息体长度）的字段；
+
+
+Netty提供了多个解码器，可以进行分包的操作，分别是：
+
+    LineBasedFrameDecoder
+
+    DelimiterBasedFrameDecoder（添加特殊分隔符报文来分包）
+
+    FixedLengthFrameDecoder（使用定长的报文来分包）
+
+    LengthFieldBasedFrameDecoder   
+    
+以上都是生产中不经常使用的.  
+  
+接下来我们使用Protocol 来解决,拆、粘包,用Protocol来解决拆、粘包那是相当简单的.
+只需要在服务端和客户端加上这两个编解码工具即可:
+```java
+//拆包解码
+.addLast(new ProtobufVarint32FrameDecoder())
+.addLast(new ProtobufVarint32LengthFieldPrepender())
+```
+这个编解码工具可以简单理解为是在消息体中加了一个 32 位长度的整形字段，用于表明当前消息长度。
+   
+   
+addLast(new LengthFieldBasedFrameDecoder(1024 * 1024, 0, 4, 0, 0))                     
