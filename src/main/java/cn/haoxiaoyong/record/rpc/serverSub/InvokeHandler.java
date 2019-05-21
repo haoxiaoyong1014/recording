@@ -14,8 +14,8 @@ public class InvokeHandler extends ChannelInboundHandlerAdapter {
         //服务方接口和实现类所在的包路径
         String interfacePath = "cn.haoxiaoyong.record.rpc.server";
         int lastDot = classInfo.getClassName().lastIndexOf(".");
-        String interfaceName = classInfo.getClassName().substring(lastDot);
-        Class<?> superClass = Class.forName(interfacePath + interfaceName);
+        String interfaceName = classInfo.getClassName().substring(lastDot);//.HelloNetty
+        Class<?> superClass = Class.forName(interfacePath + interfaceName);//interface cn.haoxiaoyong.record.rpc.server.HelloNetty
         Reflections reflections = new Reflections(interfacePath);//这里用到了 pom.xml中的依赖项
         //得到某接口下的所有实现类
         Set<Class<?>> ImplClassSet = (Set<Class<?>>) reflections.getSubTypesOf(superClass);

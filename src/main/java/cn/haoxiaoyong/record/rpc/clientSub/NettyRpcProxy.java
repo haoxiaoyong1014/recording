@@ -16,6 +16,7 @@ import io.netty.handler.codec.serialization.ObjectEncoder;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.concurrent.atomic.LongAdder;
 
 //客户端代理类
 public class NettyRpcProxy {
@@ -27,7 +28,7 @@ public class NettyRpcProxy {
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                 //封装ClassInfo
                 ClassInfo classInfo = new ClassInfo();
-                classInfo.setClassName(target.getName());
+                classInfo.setClassName(target.getName());//cn.haoxiaoyong.record.rpc.client.HelloNetty
                 classInfo.setMethodName(method.getName());
                 classInfo.setObjects(args);
                 classInfo.setTypes(method.getParameterTypes());
@@ -61,5 +62,4 @@ public class NettyRpcProxy {
             }
         });
     }
-
 }

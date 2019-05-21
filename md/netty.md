@@ -1,3 +1,25 @@
+ [概述](#概述)
+
+ [核心API](#核心API介绍)
+
+ 入门案例
+
+ 网络聊天案例
+
+ 整合WebSocket
+ 
+ 使用netty做心跳检测
+ 
+ 使用netty做文件传输
+ 
+ netty编码解码
+ 
+ netty粘包拆包
+
+
+<div id="gaishu"></div>
+
+
 #### 概述
 
 #### 单线程模型: 
@@ -500,7 +522,7 @@ Protocol 是Google 发布的开源项目，全称Google Protocol Buffers，特�
  以上同理
 * 2.3 通过protoc.exe 根据描述文件生成Java 类，具体操作如下所示：
 
-    * 进入 `BaseRequest.proto`,`BaseRequest.proto`这两个文件所在的目录;
+    * 进入 `BaseRequest.proto`,`BaseResponse.proto`这两个文件所在的目录;
     * 执行 `protoc --java_out=/tmp BaseResponse.proto BaseRequest.proto`,生成的 java类就会在 /tmp 文件夹下;当然这个目录可以改为其他的.
     * 将这两个 java 类拷贝到项目中,这两个类我们不要编辑它，直接拿着用即可，该类内部有一个内部类，这个内部类才是真正的POJO，一定要注意。
 
