@@ -32,6 +32,8 @@
 
 * [生产者-消费者与队列](#queue)
 
+* [synchronized的三种使用方式](#synchronized的三种使用方式)
+
 * [synchronized底层语义原理](#synchronized底层语义原理)
 
 <div id="Mark"></div>
@@ -891,6 +893,11 @@ public class Child extends Thread {
 #### 生产者-消费者与队列
 
 <a href="https://github.com/haoxiaoyong1014/recording/blob/master/md/thread3.md">生产者-消费者与队列</a>
+
+
+#### synchronized的三种使用方式
+
+<a href="https://github.com/haoxiaoyong1014/recording/blob/master/md/synUse.md">synchronized的三种使用方式</a>
 
 
 #### synchronized底层语义原理
