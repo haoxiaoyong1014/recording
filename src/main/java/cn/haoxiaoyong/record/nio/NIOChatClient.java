@@ -75,7 +75,6 @@ public class NIOChatClient {
                 String msg = new String(buffer.array());
                 System.out.println(msg.trim());
             }
-        //}
     }
     //从服务端接收数据
     /*public void receiveMsg() throws IOException {

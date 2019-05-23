@@ -33,7 +33,7 @@ public class TestOneAndTwo {
      * 线程池
      * @param args
      */
-    /*public static void main(String[] args) {
+    /*public static void Main(String[] args) {
         ExecutorService threadPool = Executors.newCachedThreadPool();
         for (int i = 1; i < 5; i++) {
             final int taskID = i;

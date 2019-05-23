@@ -44,35 +44,59 @@
 
 **[NIO编程](https://github.com/haoxiaoyong1014/recording/blob/master/nio.md)**    
 
-* 网络IO的介绍
-
-* nio的概述
-
-* channel通道
-
-* buffer缓冲区
-
-* selector选择器
-
-* nio读取文件
-
-* nio实例
+     网络IO的介绍
     
+     nio的概述
     
-**Netty框架**   
+     channel通道
+    
+     FileChannel文件IO
+    
+     buffer缓冲区
+    
+     selector选择器
+    
+     selectionKey
+    
+     NIO的入门案例
+    
+     网络聊天案例
+    
+     源码分析 
+     
+     IO 对比总结  
+     
+ **[BIO,NIO AIO 总结](https://github.com/haoxiaoyong1014/recording/blob/master/sumup.md)**   
+ 
+    同步异步
+    
+    阻塞非阻塞
+    
+    BIO总结
+    
+    NIO总结
+    
+    AIO总结
+      
+    
+**[Netty框架](https://github.com/haoxiaoyong1014/recording/blob/master/netty.md)**   
 
-    * 概述
+     概述
     
-    * 核心API
+     核心API
     
-    * 入门案例
+     入门案例
     
-    * 网络聊天案例
+     网络聊天案例
     
-    * 编码和解码
+     整合WebSocket
+     
+     使用netty做心跳检测
+     
+     使用netty做文件传输
     
 **自定义RPC**   
 
-    * 整体分析
+     整体分析
     
-    * 设置和实现
+     设置和实现

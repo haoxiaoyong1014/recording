@@ -20,6 +20,8 @@
 
 * [源码分析](#source)
 
+* [IO 对比总结](#iod)
+
 #### 网络IO
 <div id="network"></div>
 讲网络IO前，我们先对同步、异步、阻塞、非阻塞
@@ -368,6 +370,18 @@ public class NIOClient02 {
 
 ### 网络聊天案例
 
+**服务端代码:**
+
+<a href="https://github.com/haoxiaoyong1014/recording/blob/master/src/main/java/cn/haoxiaoyong/record/nio/NIOChatServer.java">NIOChatServer</a>
+
+**客户端代码**
+
+<a href="https://github.com/haoxiaoyong1014/recording/blob/master/src/main/java/cn/haoxiaoyong/record/nio/NIOChatClient.java">NIOChatClient</a>
+
+**启动客户端代码**
+
+<a href="https://github.com/haoxiaoyong1014/recording/blob/master/src/test/java/cn/haoxiaoyong/record/nio/TestChat.java">TestChat</a>
+
 <div id="source"></div>
 
 ### 源码分析
@@ -375,3 +389,45 @@ public class NIOClient02 {
 <a href="https://juejin.im/post/5c2e23156fb9a049ff4e4009">BIO到NIO源码的一些事儿之NIO 上</a>
 
 <a href="https://juejin.im/post/5c34d1dd6fb9a049c84fa2ce">BIO到NIO源码的一些事儿之NIO 中</a>
+
+<a href="https://muyinchen.github.io/2019/01/12/BIO%E5%88%B0NIO%E6%BA%90%E7%A0%81%E7%9A%84%E4%B8%80%E4%BA%9B%E4%BA%8B%E5%84%BF%E4%B9%8BNIO%20%E4%B8%8B%20%E4%B9%8B%20Selector/">BIO到NIO源码的一些事儿之NIO 下 之 Selector</a>
+
+<div id="aio"></div>
+
+### AIO 编程
+
+JDK 7 引入了Asynchronous I/O，即AIO。在进行I/O 编程中，常用到两种模式：Reactor
+和Proactor。Java 的NIO 就是Reactor，当有事件触发时，服务器端得到通知，进行相应的
+处理。
+AIO 即NIO2.0，叫做异步不阻塞的IO。AIO 引入异步通道的概念，采用了Proactor 模式，
+简化了程序编写，一个有效的请求才启动一个线程，它的特点是先由操作系统完成后才通知
+服务端程序启动线程去处理，一般适用于连接数较多且连接时间较长的应用。目前AIO 还没有广泛应用,不作为重点.
+
+<div id="iod"></div>
+
+### IO 对比总结
+
+IO 的方式通常分为几种：同步阻塞的BIO、同步非阻塞的NIO、异步非阻塞的AIO。
+
+* BIO 方式适用于连接数目比较小且固定的架构，这种方式对服务器资源要求比较高，并发局限于应用中，JDK1.4 以前的唯一选择，但程序直观简单易理解。
+
+* NIO 方式适用于连接数目多且连接比较短（轻操作）的架构，比如聊天服务器，并发局限于应用中，编程比较复杂，JDK1.4 开始支持。
+ 
+* AIO 方式使用于连接数目多且连接比较长（重操作）的架构，比如相册服务器，充分调用OS 参与并发操作，编程比较复杂，JDK7 开始支持。
+    
+举个例子再理解一下：
+
+* 同步阻塞:  你到饭馆点餐，然后在那等着，啥都干不了，饭馆没做好，你就必须等着！
+
+* 同步非阻塞：你在饭馆点完餐，就去玩儿了。不过玩一会儿，就回饭馆问一声：好了没啊！
+
+* 异步非阻塞：饭馆打电话说，我们知道您的位置，一会给你送过来，安心玩儿就可以了，类似于现在的外卖。
+  
+
+  | 对比总结 | BIO | NIO | AIO
+  | :-------| :----|:----|:----|
+  | IO方式 | 同步阻塞| 同步非阻塞(多路复用) | 异步非阻塞 |
+  | API使用难度 | 简单 | 复杂 | 复杂 |
+  | 可靠性 | 差 | 好 | 好 |
+  | 吞吐量 | 低 | 高 | 高|
+   
