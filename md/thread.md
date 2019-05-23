@@ -32,6 +32,8 @@
 
 * [生产者-消费者与队列](#queue)
 
+* [synchronized底层语义原理](#synchronized底层语义原理)
+
 <div id="Mark"></div>
 
 #### 基本知识回顾 
@@ -889,6 +891,12 @@ public class Child extends Thread {
 #### 生产者-消费者与队列
 
 <a href="https://github.com/haoxiaoyong1014/recording/blob/master/md/thread3.md">生产者-消费者与队列</a>
+
+
+#### synchronized底层语义原理
+
+<a href="https://github.com/haoxiaoyong1014/recording/blob/master/md/syn.md">synchronized底层语义原理</a>
+
 
 [回到顶部](#top)
                                                   

@@ -29,6 +29,9 @@
      生产者-消费者与队列
     
      线程池的使用
+     
+     synchronized底层语义原理
+     
     
 **[BIO编程](https://github.com/haoxiaoyong1014/recording/blob/master/md/bio.md)** 
 
