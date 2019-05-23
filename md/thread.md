@@ -30,7 +30,7 @@
 
 * [生产者消费者模式](#sq)
 
-* [生产者-消费者与队列](#queue)
+* [生产者-消费者与队列](#生产者-消费者与队列)
 
 * [synchronized的三种使用方式](#synchronized的三种使用方式)
 
@@ -888,7 +888,6 @@ public class Child extends Thread {
 农夫放了一个水果,目前框里有1个水果
 ```
 
-<div id="queue"></div>
 
 #### 生产者-消费者与队列
 
