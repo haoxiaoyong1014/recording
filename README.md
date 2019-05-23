@@ -1,6 +1,6 @@
 #### 学习笔记
 
-**[多线程编程](https://github.com/haoxiaoyong1014/recording/blob/master/md/thread.md)**
+**[多线程并发编程](https://github.com/haoxiaoyong1014/recording/blob/master/md/thread.md)**
 
      基本知识回顾
     
