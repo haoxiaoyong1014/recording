@@ -1,3 +1,27 @@
+ 
+ [单线程模型](#单线程模型)
+   
+ [多线程模型](#多线程模型)
+   
+ [主从线程模型](#主从线程模型)  
+    
+ [核心API](#核心API介绍)
+
+ [入门案例](#入门案例)
+ 
+ [网络聊天案例](#网络聊天案例)
+ 
+ [整合WebSocket](#整合WebSocket)
+ 
+ [使用netty做心跳检测](#使用netty做心跳检测)
+ 
+ [使用netty做文件传输](#使用netty做文件传输)
+ 
+ [netty编码解码](#netty编码解码)
+ 
+ [netty粘包拆包](#netty粘包拆包 )
+
+
 #### 概述
 
 #### 单线程模型: 
@@ -421,4 +445,151 @@ Netty结合webSocket做简单的聊天案例
   
 #### 使用netty做文件传输
 
-<a href="https://github.com/haoxiaoyong1014/netty-file">使用netty做文件传输</a>                  
+<a href="https://github.com/haoxiaoyong1014/netty-file">使用netty做文件传输</a>  
+
+#### netty编码解码
+
+**概述**
+
+    我们在编写网络应用程序的时候需要注意codec(编解码器),因为数据在网络中传输的都是二进制字节码数据,而我们拿到的目标数据往往
+    不是字节码数据,因此在发送数据时就需要编码,收到数据时需要解码
+    codec 的组成部分有两个：decoder(解码器)和encoder(编码器)。encoder 负责把业务数据转换成字节码数据，decoder 负责把字节码数据转换成业务数据。
+    其实Java 的序列化技术就可以作为codec 去使用，但是它的硬伤太多：
+        1. 无法跨语言，这应该是Java 序列化最致命的问题了。
+        2. 序列化后的体积太大，是二进制编码的5 倍多。
+        3. 序列化性能太低。
+    由于Java 序列化技术硬伤太多，因此Netty 自身提供了一些codec，如下所示：
+    Netty 提供的解码器：
+        1. StringDecoder, 对字符串数据进行解码
+        2. ObjectDecoder，对Java 对象进行解码
+    Netty 提供的编码器:
+        1. StringEncoder，对字符串数据进行编码
+        2. ObjectEncoder，对Java 对象进行编码
+    Netty 本身自带的ObjectDecoder 和ObjectEncoder 可以用来实现POJO 对象或各种业务对象的编码和解码，但其内部使用的仍是Java 序列化技术，所以我们不建议使用。因此对
+    于POJO 对象或各种业务对象要实现编码和解码，我们需要更高效更强的技术。  
+    
+**Google 的Protocol(Google出品必然牛x)**  
+
+Protocol 是Google 发布的开源项目，全称Google Protocol Buffers，特点如下：
+* 支持跨平台、多语言（支持目前绝大多数语言，例如C++、C#、Java、python 等）
+* 高性能，高可靠性
+* 使用Protocol 编译器能自动生成代码，Protocol 是将类的定义使用.proto 文件进行描述，然后通过protoc.exe 编译器根据.proto 自动生成.java 文件
+
+1, <a href="https://github.com/haoxiaoyong1014/recording/blob/master/md/proto.md">首先是安装</a>
+
+2, 使用:
+
+   * 2.1 引入Protocol的坐标
+ ```xml
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>3.6.1</version>
+        </dependency>
+```
+
+ * 2.2定义自己的协议格式
+   
+  接着是需要按照官方要求的语法定义自己的协议格式。
+
+  比如我这里需要定义一个输入输出的报文格式：
+  
+  BaseRequest.proto:
+    
+        syntax = "proto3"; //(1)
+        option java_outer_classname = "BaseRequest";//(2)
+        message RequestInfo { //(3)
+            int32 id = 1; //(4)
+            string appid = 2;
+        }
+ (1): 版本号 
+   
+ (2): 设置生成的Java类名  
+ 
+ (3): 内部类的类名,真正的POJO
+ 
+ (4): 设置类中的属性,符号后是序号,不是属性值 
+ 
+注意个文件名`BaseRequest.proto`必须是 .proto后缀
+
+  BaseResponse.proto:
+  
+        syntax = "proto3";
+        option java_outer_classname = "BaseResponse";
+        message ResponseInfo {
+            int32 id = 1;
+            string name = 2;
+            string responseMessage=3;
+        }
+ 以上同理
+* 2.3 通过protoc.exe 根据描述文件生成Java 类，具体操作如下所示：
+
+    * 进入 `BaseRequest.proto`,`BaseResponse.proto`这两个文件所在的目录;
+    * 执行 `protoc --java_out=/tmp BaseResponse.proto BaseRequest.proto`,生成的 java类就会在 /tmp 文件夹下;当然这个目录可以改为其他的.
+    * 将这两个 java 类拷贝到项目中,这两个类我们不要编辑它，直接拿着用即可，该类内部有一个内部类，这个内部类才是真正的POJO，一定要注意。
+
+* 2.4 在 netty 中使用  
+**Client**
+![image.png](https://upload-images.jianshu.io/upload_images/15181329-58f2117f27c4d2ce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+上述代码在编写客户端程序时，要向Pipeline 链中添加ProtobufEncoder 编码器对象。
+
+![image.png](https://upload-images.jianshu.io/upload_images/15181329-388859943cdab4af.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+上述代码在往服务器端发送（POJO）时就可以使用生成的BaseRequest 类搞定，非常方便。
+
+**Server**
+
+![image.png](https://upload-images.jianshu.io/upload_images/15181329-ad500ed55c41042f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+上述代码在编写服务器端程序时，要向Pipeline 链中添加ProtobufDecoder 解码器对象。
+
+![image.png](https://upload-images.jianshu.io/upload_images/15181329-17ffeee31366b57b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+上述代码在服务器端接收数据时,直接就可以把数据转换成 pojo 使用,非常方便
+
+至此使用Google 的Protocol就结束了...
+
+#### netty粘包拆包 
+
+**什么是粘包、拆包？**
+在基于流的传输里比如TCP/IP，接收到的数据会先被存储到一个socket接收缓冲里。不幸的是，基于流的传输并不是一个数据包队列，而是一个字节队列。即使你发送了2个独立的数据包，操作系统也不会作为2个消息处理而仅仅是作为一连串的字节而言。
+因此这是不能保证你远程写入的数据就会准确地读取。举个例子，让我们假设操作系统的TCP/TP协议栈已经接收了3个数据包：
+  
+![image.png](https://upload-images.jianshu.io/upload_images/15181329-152e53d3cf533bab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+ 
+由于基于流传输的协议的这种普通的性质，在你的应用程序里读取数据的时候会有很高的可能性被分成下面的片段
+
+![image.png](https://upload-images.jianshu.io/upload_images/15181329-c2ee5f5a27c60f83.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+因此，一个接收方不管他是客户端还是服务端，都应该把接收到的数据整理成一个或者多个更有意思并且能够让程序的业务逻辑更好理解的数据。在上面的例子中，接收到的数据应该被构造成下面的格式：
+
+![image.png](https://upload-images.jianshu.io/upload_images/15181329-152e53d3cf533bab.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+**解决方法由如下几种：**
+
+1、消息定长，报文大小固定长度，例如每个报文的长度固定为200字节，如果不够空位补空格；
+
+2、包尾添加特殊分隔符，例如每条报文结束都添加回车换行符（例如FTP协议）或者指定特殊字符作为报文分隔符，接收方通过特殊分隔符切分报文区分；
+
+3、将消息分为消息头和消息体，消息头中包含表示信息的总长度（或者消息体长度）的字段；
+
+
+Netty提供了多个解码器，可以进行分包的操作，分别是：
+
+    LineBasedFrameDecoder
+
+    DelimiterBasedFrameDecoder（添加特殊分隔符报文来分包）
+
+    FixedLengthFrameDecoder（使用定长的报文来分包）
+
+    LengthFieldBasedFrameDecoder   
+    
+以上都是生产中不经常使用的.  
+  
+接下来我们使用Protocol 来解决,拆、粘包,用Protocol来解决拆、粘包那是相当简单的.
+只需要在服务端和客户端加上这两个编解码工具即可:
+```java
+//拆包解码
+.addLast(new ProtobufVarint32FrameDecoder())
+.addLast(new ProtobufVarint32LengthFieldPrepender())
+```
+这个编解码工具可以简单理解为是在消息体中加了一个 32 位长度的整形字段，用于表明当前消息长度。
+ 
+<a href="https://www.jianshu.com/p/dc26e944da95">netty源码分析之拆包器的奥秘</a>                    

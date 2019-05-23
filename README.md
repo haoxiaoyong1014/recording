@@ -1,6 +1,6 @@
 #### 学习笔记
 
-**[多线程编程](https://github.com/haoxiaoyong1014/recording/blob/master/thread.md)**
+**[多线程编程](https://github.com/haoxiaoyong1014/recording/blob/master/md/thread.md)**
 
      基本知识回顾
     
@@ -30,7 +30,7 @@
     
      线程池的使用
     
-**[BIO编程](https://github.com/haoxiaoyong1014/recording/blob/master/bio.md)** 
+**[BIO编程](https://github.com/haoxiaoyong1014/recording/blob/master/md/bio.md)** 
 
     到底什么是“IO Block”
     
@@ -42,7 +42,7 @@
     
     利用线程池解决BIO-伪异步I/O模型
 
-**[NIO编程](https://github.com/haoxiaoyong1014/recording/blob/master/nio.md)**    
+**[NIO编程](https://github.com/haoxiaoyong1014/recording/blob/master/md/nio.md)**    
 
      网络IO的介绍
     
@@ -66,7 +66,7 @@
      
      IO 对比总结  
      
- **[BIO,NIO AIO 总结](https://github.com/haoxiaoyong1014/recording/blob/master/sumup.md)**   
+ **[BIO,NIO AIO 总结](https://github.com/haoxiaoyong1014/recording/blob/master/md/sumup.md)**   
  
     同步异步
     
@@ -79,7 +79,7 @@
     AIO总结
       
     
-**[Netty框架](https://github.com/haoxiaoyong1014/recording/blob/master/netty.md)**   
+**[Netty框架](https://github.com/haoxiaoyong1014/recording/blob/master/md/netty.md)**   
 
      概述
     
@@ -94,9 +94,19 @@
      使用netty做心跳检测
      
      使用netty做文件传输
+     
+     netty编码解码
+     
+     netty粘包拆包
     
-**自定义RPC**   
+**[自定义RPC](https://github.com/haoxiaoyong1014/recording/blob/master/md/rpc.md)**   
 
      整体分析
     
      设置和实现
+     
+     代码实现
+     
+     使用方式
+     
+     测试结果

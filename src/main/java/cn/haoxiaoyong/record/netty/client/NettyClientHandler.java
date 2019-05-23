@@ -12,7 +12,10 @@ import io.netty.util.CharsetUtil;
  * github:https://github.com/haoxiaoyong1014
  */
 public class NettyClientHandler extends ChannelInboundHandlerAdapter {
-
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 
     //监听到链接
     @Override
@@ -54,4 +57,5 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
     public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
         System.out.println("Client Close");
     }
+
 }

@@ -1,6 +1,5 @@
 package cn.haoxiaoyong.record.netty.client;
 
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -31,7 +30,5 @@ public class NettyClient {
         }
         cf.channel().closeFuture().sync();
         group.shutdownGracefully().syncUninterruptibly();
-
     }
-
 }
