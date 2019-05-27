@@ -53,6 +53,7 @@ public class NIOChatClient {
     public void sendMsg(String msg) throws IOException {
         //如果控制台输入的 bye 就关闭通道,结束聊天
         if (msg.equalsIgnoreCase("bye")) {
+
             socketChannel.close();
             //socketChannel = null;
             return;
@@ -67,12 +68,13 @@ public class NIOChatClient {
     public void receiveMsg() throws IOException {
         //得到一个缓冲区
         ByteBuffer buffer = ByteBuffer.allocate(1024);
-            //读取数据并存储到缓冲区
-            int size = socketChannel.read(buffer);
+        //读取数据并存储到缓冲区
+        //if (selector.select() > 0) {
+        int size = socketChannel.read(buffer);
             if (size > 0) {
                 String msg = new String(buffer.array());
                 System.out.println(msg.trim());
-        }
+            }
     }
     //从服务端接收数据
     /*public void receiveMsg() throws IOException {

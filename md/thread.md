@@ -30,7 +30,11 @@
 
 * [生产者消费者模式](#sq)
 
-* [生产者-消费者与队列](#queue)
+* [生产者-消费者与队列](#生产者-消费者与队列)
+
+* [synchronized的三种使用方式](#synchronized的三种使用方式)
+
+* [synchronized底层语义原理](#synchronized底层语义原理)
 
 <div id="Mark"></div>
 
@@ -884,11 +888,21 @@ public class Child extends Thread {
 农夫放了一个水果,目前框里有1个水果
 ```
 
-<div id="queue"></div>
 
 #### 生产者-消费者与队列
 
 <a href="https://github.com/haoxiaoyong1014/recording/blob/master/md/thread3.md">生产者-消费者与队列</a>
+
+
+#### synchronized的三种使用方式
+
+<a href="https://github.com/haoxiaoyong1014/recording/blob/master/md/synUse.md">synchronized的三种使用方式</a>
+
+
+#### synchronized底层语义原理
+
+<a href="https://github.com/haoxiaoyong1014/recording/blob/master/md/syn.md">synchronized底层语义原理</a>
+
 
 [回到顶部](#top)
                                                   

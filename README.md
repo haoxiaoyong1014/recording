@@ -1,6 +1,6 @@
 #### 学习笔记
 
-**[多线程编程](https://github.com/haoxiaoyong1014/recording/blob/master/md/thread.md)**
+**[多线程并发编程](https://github.com/haoxiaoyong1014/recording/blob/master/md/thread.md)**
 
      基本知识回顾
     
@@ -29,6 +29,11 @@
      生产者-消费者与队列
     
      线程池的使用
+     
+     synchronized的三种使用方式
+     
+     synchronized底层语义原理
+     
     
 **[BIO编程](https://github.com/haoxiaoyong1014/recording/blob/master/md/bio.md)** 
 
