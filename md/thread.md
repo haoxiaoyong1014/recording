@@ -893,6 +893,13 @@ public class Child extends Thread {
 
 <a href="https://github.com/haoxiaoyong1014/recording/blob/master/md/thread3.md">生产者-消费者与队列</a>
 
+#### 线程池原理
+
+[Java线程池解析](https://juejin.im/post/5d1882b1f265da1ba84aa676#comment)
+
+[线程池没你想的那么简单](https://juejin.im/post/5ce1f3b6f265da1ba2522f62)
+
+[多线程内容聚合](https://mp.weixin.qq.com/s?__biz=MzI4Njc5NjM1NQ==&mid=2247488811&idx=6&sn=a769526cf5c4dfc5b0f8e5a40f984cff&chksm=ebd62a07dca1a3116cc6c45ceb7a81d47293b9811c8df97b5ca363c6370ffccfd913bab3599f&scene=21#wechat_redirect)
 
 #### synchronized的三种使用方式
 
